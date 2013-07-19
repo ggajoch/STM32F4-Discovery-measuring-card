@@ -53,7 +53,7 @@
 /* Private define ------------------------------------------------------------*/
 
 /*--------------- LCD Messages ---------------*/
-#define MESSAGE1   "        dddd        "
+#define MESSAGE1   "        eeee        "
 #define MESSAGE2   "  STM32F-4 Series   "
 #define MESSAGE3   " UDP/TCP EchoServer "
 #define MESSAGE4   "                    "
@@ -177,21 +177,26 @@ typedef struct
 
 void MainTask(void * pvParameters)
 {
+	err_t err;
 
 	char tekst[50];
 	int i = 0;
 	u16_t prev = 0;
 	Point dane[330];
-	UDPsetup_network();
+	
+	vTaskDelay(1000);
+	//LWIP_UNUSED_ARG(arg);
+
+  UDPsetup_network();
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
 
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStruct);
+	GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 	/*ADC_InitStruct.
 	 ADC_InitStruct.ADC_ContinuousConvMode = ENABLE;
@@ -204,15 +209,13 @@ void MainTask(void * pvParameters)
 	ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;	//data converted will be shifted to right
 	ADC_InitStruct.ADC_Resolution = ADC_Resolution_12b;	//Input voltage is converted into a 12bit number giving a maximum value of 4096
 	ADC_InitStruct.ADC_ContinuousConvMode = ENABLE; //the conversion is continuous, the input data is converted more than once
-	ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1; // conversion is synchronous with TIM1 and CC1 (actually I'm not sure about this one :/)
 	ADC_InitStruct.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None; //no trigger for conversion
-	ADC_InitStruct.ADC_NbrOfConversion = 1; //I think this one is clear :p
 	ADC_InitStruct.ADC_ScanConvMode = DISABLE; //The scan is configured in one channel
 	ADC_Init(ADC1, &ADC_InitStruct); //Initialize ADC with the previous configuration
 	//Enable ADC conversion
 	ADC_Cmd(ADC1, ENABLE);
 	//Select the channel to be read from
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_480Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_480Cycles);
 
 	LCD_Clear(Black);
 	LCD_DisplayStringLine(Line0, "    wykres");
@@ -225,29 +228,28 @@ void MainTask(void * pvParameters)
 	}
 	ADC_SoftwareStartConv(ADC1);			//Start the conversion
 
+
+	LCD_Clear(Blue);
+	LCD_DisplayStringLine(Line0,"heeeeeeeeeeeeeeeelo");
 	while (1)
 	{
-		for (i = 0; i < 320; ++i)
-		{
-			u16_t ain;
+		u16_t ain;
+		u16_t adcMeasurements[300];
+		/*adcMeasurements[0] = adcMeasurements[1] = 0;
+		adcMeasurements[2] = 1;
+		adcMeasurements[3] = 0b1110;*/
 
-			//vTaskDelay(50);
+		for (i = 0; i < 270; ++i)
+		{
 			while (!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC))
 				;
-			ain = ADC_GetConversionValue(ADC1);
-			ADC_SoftwareStartConv(ADC1);		//Start the conversion
-			dane[i].Y = (ain/17);
-			LCD_PolyLine(dane, i);
-			LCD_DrawUniLine(i-1, prev, i, (int)(ain/17));
-			sprintf(tekst, "%d\n", ain);
-			//LCD_ClearLine(Line5);
-			//LCD_DisplayStringLine(Line5, tekst);
-
-			UDPsend_packet(tekst, strlen(tekst));
-			prev = ain / 17;
-
+//			dane[i].Y = (ain/17);
+//			prev = ain / 17;
+			adcMeasurements[i] = ADC_GetConversionValue(ADC1);
 		}
-		LCD_Clear(Black);
+		UDPsend_packet(adcMeasurements,270);
+		//LCD_Clear(Black);
+		//LCD_PolyLine(dane, 320);
 	}
 }
 
@@ -357,3 +359,4 @@ void assert_failed(uint8_t* file, uint32_t line)
 #endif
 
 /*********** Portions COPYRIGHT 2012 Embest Tech. Co., Ltd.*****END OF FILE****/
+
