@@ -1,0 +1,152 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\User\Desktop\uVisionWorkspace\udp\Codes\STM32F4xx_Ethernet_Example\Project\FreeRTOS\udptcp_echo_server_netconn\MDK-ARM\Project.uvproj
+Project File Date:  07/19/2013
+
+<h2>Output:</h2>
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(132): error:  #20: identifier "MineBuf" is undefined
+..\src\main.c(134): warning:  #223-D: function "nettcon_disconnect" declared implicitly
+..\src\main.c(177): warning:  #167-D: argument of type "volatile Point *" is incompatible with parameter of type "pPoint"
+..\src\main.c(164): warning:  #177-D: variable "dd" was declared but never referenced
+..\src\main.c(165): warning:  #177-D: variable "xxx" was declared but never referenced
+..\src\main.c(158): warning:  #177-D: variable "x" was declared but never referenced
+..\src\main.c(158): warning:  #177-D: variable "y" was declared but never referenced
+..\src\main.c(180): warning:  #111-D: statement is unreachable
+..\src\main.c(145): warning:  #177-D: variable "tekst" was declared but never referenced
+..\src\main.c(147): warning:  #177-D: variable "prev" was declared but never referenced
+..\src\main.c(148): warning:  #177-D: variable "in" was declared but never referenced
+..\src\main.c(183): error:  #169: expected a declaration
+..\src\main.c(311): warning:  #12-D: parsing restarts here after previous syntax error
+..\src\main.c(319): error:  #79: expected a type specifier
+..\src\main.c(319): error:  #79: expected a type specifier
+..\src\main.c(319): error:  #79: expected a type specifier
+..\src\main.c(319): error:  #79: expected a type specifier
+..\src\main.c(319): error:  #79: expected a type specifier
+..\src\main.c(319): error:  #79: expected a type specifier
+..\src\main.c(319): error:  #79: expected a type specifier
+..\src\main.c(319): error:  #79: expected a type specifier
+..\src\main.c(319): warning:  #77-D: this declaration has no storage class or type specifier
+..\src\main.c(319): error:  #147-D: declaration is incompatible with "signed long xTaskGenericCreate(pdTASK_CODE, const signed char *const, unsigned short, void *, unsigned long, xTaskHandle *, unsigned long *, const xMemoryRegion *const)" (declared at line 1271 of "..\..\..\..\Utilities\FreeRTOS_v6.1.0\include\task.h")
+..\src\main.c(325): warning:  #1295-D: Deprecated declaration vTaskStartScheduler - give arg types
+..\src\main.c(325): warning:  #77-D: this declaration has no storage class or type specifier
+..\src\main.c(325): error:  #147: declaration is incompatible with "void vTaskStartScheduler(void)" (declared at line 791 of "..\..\..\..\Utilities\FreeRTOS_v6.1.0\include\task.h")
+..\src\main.c(328): error:  #169: expected a declaration
+..\src\main.c(330): error:  #169: expected a declaration
+..\src\main.c(359): warning:  #12-D: parsing restarts here after previous syntax error
+..\src\main.c(361): error:  #169: expected a declaration
+..\src\main.c(383): warning: At end of source:  #12-D: parsing restarts here after previous syntax error
+".\Discover-More\Project.axf" - 15 Errors, 16 Warning(s).
+Target not created
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(132): error:  #20: identifier "MineBuf" is undefined
+..\src\main.c(172): warning:  #167-D: argument of type "volatile Point *" is incompatible with parameter of type "pPoint"
+..\src\main.c(160): warning:  #177-D: variable "xxx" was declared but never referenced
+..\src\main.c(154): warning:  #177-D: variable "x" was declared but never referenced
+..\src\main.c(154): warning:  #177-D: variable "y" was declared but never referenced
+..\src\main.c(175): warning:  #111-D: statement is unreachable
+..\src\main.c(178): error:  #169: expected a declaration
+..\src\main.c(306): warning:  #12-D: parsing restarts here after previous syntax error
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): warning:  #77-D: this declaration has no storage class or type specifier
+..\src\main.c(314): error:  #147-D: declaration is incompatible with "signed long xTaskGenericCreate(pdTASK_CODE, const signed char *const, unsigned short, void *, unsigned long, xTaskHandle *, unsigned long *, const xMemoryRegion *const)" (declared at line 1271 of "..\..\..\..\Utilities\FreeRTOS_v6.1.0\include\task.h")
+..\src\main.c(320): warning:  #1295-D: Deprecated declaration vTaskStartScheduler - give arg types
+..\src\main.c(320): warning:  #77-D: this declaration has no storage class or type specifier
+..\src\main.c(320): error:  #147: declaration is incompatible with "void vTaskStartScheduler(void)" (declared at line 791 of "..\..\..\..\Utilities\FreeRTOS_v6.1.0\include\task.h")
+..\src\main.c(323): error:  #169: expected a declaration
+..\src\main.c(325): error:  #169: expected a declaration
+..\src\main.c(354): warning:  #12-D: parsing restarts here after previous syntax error
+..\src\main.c(356): error:  #169: expected a declaration
+..\src\main.c(378): warning: At end of source:  #12-D: parsing restarts here after previous syntax error
+".\Discover-More\Project.axf" - 15 Errors, 11 Warning(s).
+Target not created
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(133): error:  #20: identifier "MineBuf" is undefined
+..\src\main.c(172): warning:  #167-D: argument of type "volatile Point *" is incompatible with parameter of type "pPoint"
+..\src\main.c(160): warning:  #177-D: variable "xxx" was declared but never referenced
+..\src\main.c(154): warning:  #177-D: variable "x" was declared but never referenced
+..\src\main.c(154): warning:  #177-D: variable "y" was declared but never referenced
+..\src\main.c(175): warning:  #111-D: statement is unreachable
+..\src\main.c(178): error:  #169: expected a declaration
+..\src\main.c(306): warning:  #12-D: parsing restarts here after previous syntax error
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): warning:  #77-D: this declaration has no storage class or type specifier
+..\src\main.c(314): error:  #147-D: declaration is incompatible with "signed long xTaskGenericCreate(pdTASK_CODE, const signed char *const, unsigned short, void *, unsigned long, xTaskHandle *, unsigned long *, const xMemoryRegion *const)" (declared at line 1271 of "..\..\..\..\Utilities\FreeRTOS_v6.1.0\include\task.h")
+..\src\main.c(320): warning:  #1295-D: Deprecated declaration vTaskStartScheduler - give arg types
+..\src\main.c(320): warning:  #77-D: this declaration has no storage class or type specifier
+..\src\main.c(320): error:  #147: declaration is incompatible with "void vTaskStartScheduler(void)" (declared at line 791 of "..\..\..\..\Utilities\FreeRTOS_v6.1.0\include\task.h")
+..\src\main.c(323): error:  #169: expected a declaration
+..\src\main.c(325): error:  #169: expected a declaration
+..\src\main.c(354): warning:  #12-D: parsing restarts here after previous syntax error
+..\src\main.c(356): error:  #169: expected a declaration
+..\src\main.c(378): warning: At end of source:  #12-D: parsing restarts here after previous syntax error
+".\Discover-More\Project.axf" - 15 Errors, 11 Warning(s).
+Target not created
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(172): warning:  #167-D: argument of type "volatile Point *" is incompatible with parameter of type "pPoint"
+..\src\main.c(160): warning:  #177-D: variable "xxx" was declared but never referenced
+..\src\main.c(154): warning:  #177-D: variable "x" was declared but never referenced
+..\src\main.c(154): warning:  #177-D: variable "y" was declared but never referenced
+..\src\main.c(175): warning:  #111-D: statement is unreachable
+..\src\main.c(178): error:  #169: expected a declaration
+..\src\main.c(306): warning:  #12-D: parsing restarts here after previous syntax error
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): error:  #79: expected a type specifier
+..\src\main.c(314): warning:  #77-D: this declaration has no storage class or type specifier
+..\src\main.c(314): error:  #147-D: declaration is incompatible with "signed long xTaskGenericCreate(pdTASK_CODE, const signed char *const, unsigned short, void *, unsigned long, xTaskHandle *, unsigned long *, const xMemoryRegion *const)" (declared at line 1271 of "..\..\..\..\Utilities\FreeRTOS_v6.1.0\include\task.h")
+..\src\main.c(320): warning:  #1295-D: Deprecated declaration vTaskStartScheduler - give arg types
+..\src\main.c(320): warning:  #77-D: this declaration has no storage class or type specifier
+..\src\main.c(320): error:  #147: declaration is incompatible with "void vTaskStartScheduler(void)" (declared at line 791 of "..\..\..\..\Utilities\FreeRTOS_v6.1.0\include\task.h")
+..\src\main.c(323): error:  #169: expected a declaration
+..\src\main.c(325): error:  #169: expected a declaration
+..\src\main.c(354): warning:  #12-D: parsing restarts here after previous syntax error
+..\src\main.c(356): error:  #169: expected a declaration
+..\src\main.c(378): warning: At end of source:  #12-D: parsing restarts here after previous syntax error
+".\Discover-More\Project.axf" - 14 Errors, 11 Warning(s).
+Target not created
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(170): warning:  #167-D: argument of type "volatile Point *" is incompatible with parameter of type "pPoint"
+..\src\main.c(159): warning:  #177-D: variable "xxx" was declared but never referenced
+..\src\main.c(153): warning:  #177-D: variable "x" was declared but never referenced
+..\src\main.c(153): warning:  #177-D: variable "y" was declared but never referenced
+..\src\main.c(173): warning:  #111-D: statement is unreachable
+linking...
+Program Size: Code=45806 RO-data=5262 RW-data=432 ZI-data=54112  
+".\Discover-More\Project.axf" - 0 Errors, 5 Warning(s).
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(167): warning:  #167-D: argument of type "volatile Point *" is incompatible with parameter of type "pPoint"
+..\src\main.c(157): warning:  #177-D: variable "x" was declared but never referenced
+..\src\main.c(157): warning:  #177-D: variable "y" was declared but never referenced
+..\src\main.c(170): warning:  #111-D: statement is unreachable
+linking...
+Program Size: Code=45842 RO-data=5262 RW-data=432 ZI-data=54112  
+".\Discover-More\Project.axf" - 0 Errors, 4 Warning(s).
