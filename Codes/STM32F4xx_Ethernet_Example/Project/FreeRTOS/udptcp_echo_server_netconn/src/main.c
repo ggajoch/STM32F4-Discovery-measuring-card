@@ -107,6 +107,7 @@ static struct netconn *Connection;
 static unsigned short Port;
 ADC_InitTypeDef ADC_InitStruct;
 GPIO_InitTypeDef GPIO_InitStruct;
+extern NVIC_InitTypeDef NVIC_InitStructure;
 volatile Point dane[330];
 
 int UDPsetup_network()
@@ -174,6 +175,26 @@ typedef struct
 //	LCD_Clear(Black);
 //
 //}
+volatile u16_t adcMeasurements[300];
+volatile u16_t num = 0; 
+xSemaphoreHandle xSemaphore;
+
+void ADC_IRQHandler()
+{
+	static signed portBASE_TYPE xHigherPriorityTaskWoken; 
+	if( ADC_GetITStatus(ADC1, ADC_IT_EOC) )
+	{
+		ADC_ClearITPendingBit(ADC1, ADC_IT_EOC);
+		adcMeasurements[num] = ADC_GetConversionValue(ADC1);
+		++num;
+		if( num == 270 )
+		{
+			num = 0;
+			xSemaphoreGiveFromISR( xSemaphore, &xHigherPriorityTaskWoken );
+		}
+	}
+	//portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
+}
 
 void MainTask(void * pvParameters)
 {
@@ -188,6 +209,8 @@ void MainTask(void * pvParameters)
 	//LWIP_UNUSED_ARG(arg);
 
   UDPsetup_network();
+	
+	vSemaphoreCreateBinary( xSemaphore );
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
@@ -216,7 +239,21 @@ void MainTask(void * pvParameters)
 	ADC_Cmd(ADC1, ENABLE);
 	//Select the channel to be read from
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_480Cycles);
+	ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
 
+
+
+
+
+
+	NVIC_InitStructure.NVIC_IRQChannel = ADC_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_Init(&NVIC_InitStructure);
+	
+	
+	
 	LCD_Clear(Black);
 	LCD_DisplayStringLine(Line0, "    wykres");
 	vTaskDelay(1000);
@@ -228,26 +265,29 @@ void MainTask(void * pvParameters)
 	}
 	ADC_SoftwareStartConv(ADC1);			//Start the conversion
 
+	
 
 	LCD_Clear(Blue);
 	LCD_DisplayStringLine(Line0,"heeeeeeeeeeeeeeeelo");
+	
+	
+	
 	while (1)
 	{
 		u16_t ain;
-		u16_t adcMeasurements[300];
+		
 		/*adcMeasurements[0] = adcMeasurements[1] = 0;
 		adcMeasurements[2] = 1;
 		adcMeasurements[3] = 0b1110;*/
 
-		for (i = 0; i < 270; ++i)
+		//for (i = 0; i < 270; ++i)
 		{
-			while (!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC))
-				;
-//			dane[i].Y = (ain/17);
-//			prev = ain / 17;
-			adcMeasurements[i] = ADC_GetConversionValue(ADC1);
+			//while (!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC));
+			//adcMeasurements[i] = ADC_GetConversionValue(ADC1);
 		}
-		UDPsend_packet(adcMeasurements,270);
+		xSemaphoreTake(xSemaphore, 9999999);
+		
+		UDPsend_packet(adcMeasurements,540);
 		//LCD_Clear(Black);
 		//LCD_PolyLine(dane, 320);
 	}
