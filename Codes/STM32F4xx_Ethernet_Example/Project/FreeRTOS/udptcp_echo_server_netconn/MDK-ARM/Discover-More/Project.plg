@@ -9,127 +9,6 @@ Project File Date:  07/19/2013
 <h2>Output:</h2>
 Build target 'Discover-More'
 compiling main.c...
-..\src\main.c(237): warning:  #177-D: variable "ain" was declared but never referenced
-..\src\main.c(181): warning:  #177-D: variable "err" was declared but never referenced
-..\src\main.c(183): warning:  #177-D: variable "tekst" was declared but never referenced
-..\src\main.c(185): warning:  #177-D: variable "prev" was declared but never referenced
-..\src\main.c(186): warning:  #550-D: variable "dane" was set but never used
-linking...
-Program Size: Code=46962 RO-data=5262 RW-data=440 ZI-data=53416  
-".\Discover-More\Project.axf" - 0 Errors, 5 Warning(s).
-Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
-Erase Done.
-Programming Done.
-Verify OK.
-Build target 'Discover-More'
-compiling main.c...
-..\src\main.c(237): warning:  #177-D: variable "ain" was declared but never referenced
-..\src\main.c(181): warning:  #177-D: variable "err" was declared but never referenced
-..\src\main.c(183): warning:  #177-D: variable "tekst" was declared but never referenced
-..\src\main.c(185): warning:  #177-D: variable "prev" was declared but never referenced
-..\src\main.c(186): warning:  #550-D: variable "dane" was set but never used
-linking...
-Program Size: Code=46966 RO-data=5262 RW-data=440 ZI-data=53416  
-".\Discover-More\Project.axf" - 0 Errors, 5 Warning(s).
-Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
-Erase Done.
-Programming Done.
-Verify OK.
-Build target 'Discover-More'
-compiling main.c...
-..\src\main.c(194): warning:  #223-D: function "portYIELD_FROM_ISR" declared implicitly
-..\src\main.c(272): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
-..\src\main.c(261): warning:  #177-D: variable "ain" was declared but never referenced
-..\src\main.c(199): warning:  #177-D: variable "err" was declared but never referenced
-..\src\main.c(201): warning:  #177-D: variable "tekst" was declared but never referenced
-..\src\main.c(203): warning:  #177-D: variable "prev" was declared but never referenced
-..\src\main.c(204): warning:  #550-D: variable "dane" was set but never used
-linking...
-.\Discover-More\Project.axf: Error: L6218E: Undefined symbol portYIELD_FROM_ISR (referred from main.o).
-".\Discover-More\Project.axf" - 1 Errors, 7 Warning(s).
-Target not created
-Build target 'Discover-More'
-compiling main.c...
-..\src\main.c(273): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
-..\src\main.c(261): warning:  #177-D: variable "ain" was declared but never referenced
-..\src\main.c(199): warning:  #177-D: variable "err" was declared but never referenced
-..\src\main.c(201): warning:  #177-D: variable "tekst" was declared but never referenced
-..\src\main.c(203): warning:  #177-D: variable "prev" was declared but never referenced
-..\src\main.c(204): warning:  #550-D: variable "dane" was set but never used
-linking...
-Program Size: Code=47066 RO-data=5262 RW-data=448 ZI-data=53416  
-".\Discover-More\Project.axf" - 0 Errors, 6 Warning(s).
-Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
-Erase Done.
-Programming Done.
-Verify OK.
-Build target 'Discover-More'
-compiling main.c...
-..\src\main.c(275): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
-..\src\main.c(262): warning:  #177-D: variable "ain" was declared but never referenced
-..\src\main.c(200): warning:  #177-D: variable "err" was declared but never referenced
-..\src\main.c(202): warning:  #177-D: variable "tekst" was declared but never referenced
-..\src\main.c(204): warning:  #177-D: variable "prev" was declared but never referenced
-..\src\main.c(205): warning:  #550-D: variable "dane" was set but never used
-linking...
-Program Size: Code=47070 RO-data=5262 RW-data=448 ZI-data=53416  
-".\Discover-More\Project.axf" - 0 Errors, 6 Warning(s).
-Build target 'Discover-More'
-linking...
-Program Size: Code=47070 RO-data=5262 RW-data=448 ZI-data=53416  
-".\Discover-More\Project.axf" - 0 Errors, 0 Warning(s).
-Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
-Erase Done.
-Programming Done.
-Verify OK.
-Build target 'Discover-More'
-compiling main.c...
-..\src\main.c(247): error:  #268: declaration may not appear after executable statement in block
-..\src\main.c(248): error:  #513: a value of type "void (*)()" cannot be assigned to an entity of type "uint8_t"
-..\src\main.c(289): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
-..\src\main.c(276): warning:  #177-D: variable "ain" was declared but never referenced
-..\src\main.c(200): warning:  #177-D: variable "err" was declared but never referenced
-..\src\main.c(202): warning:  #177-D: variable "tekst" was declared but never referenced
-..\src\main.c(204): warning:  #177-D: variable "prev" was declared but never referenced
-..\src\main.c(205): warning:  #550-D: variable "dane" was set but never used
-".\Discover-More\Project.axf" - 2 Errors, 6 Warning(s).
-Target not created
-Build target 'Discover-More'
-compiling main.c...
-..\src\main.c(249): error:  #513: a value of type "void (*)()" cannot be assigned to an entity of type "uint8_t"
-..\src\main.c(290): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
-..\src\main.c(277): warning:  #177-D: variable "ain" was declared but never referenced
-..\src\main.c(201): warning:  #177-D: variable "err" was declared but never referenced
-..\src\main.c(203): warning:  #177-D: variable "tekst" was declared but never referenced
-..\src\main.c(205): warning:  #177-D: variable "prev" was declared but never referenced
-..\src\main.c(206): warning:  #550-D: variable "dane" was set but never used
-".\Discover-More\Project.axf" - 1 Errors, 6 Warning(s).
-Target not created
-Build target 'Discover-More'
-compiling main.c...
-..\src\main.c(290): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
-..\src\main.c(277): warning:  #177-D: variable "ain" was declared but never referenced
-..\src\main.c(201): warning:  #177-D: variable "err" was declared but never referenced
-..\src\main.c(203): warning:  #177-D: variable "tekst" was declared but never referenced
-..\src\main.c(205): warning:  #177-D: variable "prev" was declared but never referenced
-..\src\main.c(206): warning:  #550-D: variable "dane" was set but never used
-linking...
-.\Discover-More\Project.axf: Error: L6200E: Symbol NVIC_InitStructure multiply defined (by stm32f4_discovery.o and main.o).
-".\Discover-More\Project.axf" - 1 Errors, 6 Warning(s).
-Target not created
-Build target 'Discover-More'
-compiling main.c...
-..\src\main.c(249): error:  #20: identifier "NVIC_InitStructure" is undefined
-..\src\main.c(290): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
-..\src\main.c(277): warning:  #177-D: variable "ain" was declared but never referenced
-..\src\main.c(201): warning:  #177-D: variable "err" was declared but never referenced
-..\src\main.c(203): warning:  #177-D: variable "tekst" was declared but never referenced
-..\src\main.c(205): warning:  #177-D: variable "prev" was declared but never referenced
-..\src\main.c(206): warning:  #550-D: variable "dane" was set but never used
-".\Discover-More\Project.axf" - 1 Errors, 6 Warning(s).
-Target not created
-Build target 'Discover-More'
-compiling main.c...
 ..\src\main.c(290): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
 ..\src\main.c(277): warning:  #177-D: variable "ain" was declared but never referenced
 ..\src\main.c(201): warning:  #177-D: variable "err" was declared but never referenced
@@ -139,10 +18,74 @@ compiling main.c...
 linking...
 Program Size: Code=47094 RO-data=5262 RW-data=452 ZI-data=53420  
 ".\Discover-More\Project.axf" - 0 Errors, 6 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
 Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(290): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+..\src\main.c(277): warning:  #177-D: variable "ain" was declared but never referenced
+..\src\main.c(201): warning:  #177-D: variable "err" was declared but never referenced
+..\src\main.c(203): warning:  #177-D: variable "tekst" was declared but never referenced
+..\src\main.c(205): warning:  #177-D: variable "prev" was declared but never referenced
+..\src\main.c(206): warning:  #550-D: variable "dane" was set but never used
 linking...
-Program Size: Code=47094 RO-data=5262 RW-data=452 ZI-data=53420  
-".\Discover-More\Project.axf" - 0 Errors, 0 Warning(s).
+Program Size: Code=47110 RO-data=5262 RW-data=452 ZI-data=53420  
+".\Discover-More\Project.axf" - 0 Errors, 6 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(294): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+..\src\main.c(277): warning:  #177-D: variable "ain" was declared but never referenced
+..\src\main.c(201): warning:  #177-D: variable "err" was declared but never referenced
+..\src\main.c(203): warning:  #177-D: variable "tekst" was declared but never referenced
+..\src\main.c(205): warning:  #177-D: variable "prev" was declared but never referenced
+..\src\main.c(206): warning:  #550-D: variable "dane" was set but never used
+linking...
+Program Size: Code=47138 RO-data=5262 RW-data=452 ZI-data=53420  
+".\Discover-More\Project.axf" - 0 Errors, 6 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(215): error:  #20: identifier "xSemaphore" is undefined
+..\src\main.c(298): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+..\src\main.c(203): warning:  #177-D: variable "err" was declared but never referenced
+..\src\main.c(205): warning:  #177-D: variable "tekst" was declared but never referenced
+..\src\main.c(207): warning:  #177-D: variable "prev" was declared but never referenced
+..\src\main.c(208): warning:  #550-D: variable "dane" was set but never used
+".\Discover-More\Project.axf" - 1 Errors, 5 Warning(s).
+Target not created
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(215): error:  #20: identifier "xSemaphore" is undefined
+..\src\main.c(298): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+..\src\main.c(203): warning:  #177-D: variable "err" was declared but never referenced
+..\src\main.c(205): warning:  #177-D: variable "tekst" was declared but never referenced
+..\src\main.c(207): warning:  #177-D: variable "prev" was declared but never referenced
+..\src\main.c(208): warning:  #550-D: variable "dane" was set but never used
+".\Discover-More\Project.axf" - 1 Errors, 5 Warning(s).
+Target not created
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(298): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+..\src\main.c(203): warning:  #177-D: variable "err" was declared but never referenced
+..\src\main.c(205): warning:  #177-D: variable "tekst" was declared but never referenced
+..\src\main.c(207): warning:  #177-D: variable "prev" was declared but never referenced
+..\src\main.c(208): warning:  #550-D: variable "dane" was set but never used
+linking...
+Program Size: Code=47054 RO-data=5262 RW-data=448 ZI-data=53416  
+".\Discover-More\Project.axf" - 0 Errors, 5 Warning(s).
 Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
 Erase Done.
 Programming Done.

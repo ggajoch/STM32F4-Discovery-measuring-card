@@ -177,11 +177,12 @@ typedef struct
 //}
 volatile u16_t adcMeasurements[300];
 volatile u16_t num = 0; 
-xSemaphoreHandle xSemaphore;
+volatile u8_t aaaaaa = 0;
+//xSemaphoreHandle xSemaphore;
 
 void ADC_IRQHandler()
 {
-	static signed portBASE_TYPE xHigherPriorityTaskWoken; 
+	//static signed portBASE_TYPE xHigherPriorityTaskWoken; 
 	if( ADC_GetITStatus(ADC1, ADC_IT_EOC) )
 	{
 		ADC_ClearITPendingBit(ADC1, ADC_IT_EOC);
@@ -190,7 +191,8 @@ void ADC_IRQHandler()
 		if( num == 270 )
 		{
 			num = 0;
-			xSemaphoreGiveFromISR( xSemaphore, &xHigherPriorityTaskWoken );
+			aaaaaa = 1;
+			//xSemaphoreGiveFromISR( xSemaphore, &xHigherPriorityTaskWoken );
 		}
 	}
 	//portYIELD_FROM_ISR( xHigherPriorityTaskWoken );
@@ -210,7 +212,7 @@ void MainTask(void * pvParameters)
 
   UDPsetup_network();
 	
-	vSemaphoreCreateBinary( xSemaphore );
+	//vSemaphoreCreateBinary( xSemaphore );
 
 	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
@@ -238,7 +240,7 @@ void MainTask(void * pvParameters)
 	//Enable ADC conversion
 	ADC_Cmd(ADC1, ENABLE);
 	//Select the channel to be read from
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_480Cycles);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_3Cycles);
 	ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
 
 
@@ -274,22 +276,31 @@ void MainTask(void * pvParameters)
 	
 	while (1)
 	{
-		u16_t ain;
-		
-		/*adcMeasurements[0] = adcMeasurements[1] = 0;
-		adcMeasurements[2] = 1;
-		adcMeasurements[3] = 0b1110;*/
-
-		//for (i = 0; i < 270; ++i)
+		if( aaaaaa == 1 )
 		{
-			//while (!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC));
-			//adcMeasurements[i] = ADC_GetConversionValue(ADC1);
+			aaaaaa = 0;
+			/*adcMeasurements[0] = adcMeasurements[1] = 0;
+			adcMeasurements[2] = 1;
+			adcMeasurements[3] = 0b1110;*/
+
+			//for (i = 0; i < 270; ++i)
+			{
+				//while (!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC));
+				//adcMeasurements[i] = ADC_GetConversionValue(ADC1);
+			}
+			//xSemaphoreTake(xSemaphore, 9999999);
+			NVIC_DisableIRQ(ADC_IRQn);
+			
+			//LCD_Clear(Blue);
+			//LCD_DisplayStringLine(Line0,"wyslalem");
+			
+			
+			UDPsend_packet(adcMeasurements,540);
+			
+			NVIC_EnableIRQ(ADC_IRQn);
+			//LCD_Clear(Black);
+			//LCD_PolyLine(dane, 320);
 		}
-		xSemaphoreTake(xSemaphore, 9999999);
-		
-		UDPsend_packet(adcMeasurements,540);
-		//LCD_Clear(Black);
-		//LCD_PolyLine(dane, 320);
 	}
 }
 
