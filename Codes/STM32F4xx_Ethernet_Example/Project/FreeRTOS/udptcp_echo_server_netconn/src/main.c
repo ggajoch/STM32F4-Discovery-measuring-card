@@ -110,7 +110,16 @@ GPIO_InitTypeDef GPIO_InitStruct;
 DMA_InitTypeDef DMA_InitStruct;
 extern NVIC_InitTypeDef NVIC_InitStructure;
 ADC_CommonInitTypeDef ADC_CommonInitStructure;
+TIM_TimeBaseInitTypeDef    TIM_TimeBaseStructure;
 volatile Point dane[330];
+DAC_InitTypeDef  DAC_InitStructure;
+
+const uint16_t Sine12bit[32] = {
+                      2047, 2447, 2831, 3185, 3498, 3750, 3939, 4056, 4095, 4056,
+                      3939, 3750, 3495, 3185, 2831, 2447, 2047, 1647, 1263, 909, 
+                      599, 344, 155, 38, 0, 38, 155, 344, 599, 909, 1263, 1647};
+const uint8_t Escalator8bit[6] = {0x0, 0x33, 0x66, 0x99, 0xCC, 0xFF};
+
 
 int UDPsetup_network()
 {
@@ -231,80 +240,47 @@ void MainTask(void * pvParameters)
 	//LWIP_UNUSED_ARG(arg);
 
   UDPsetup_network();
-	
-	vTaskDelay(1000);
-	//vSemaphoreCreateBinary( xSemaphore );
+//	
+//// --------------------------- ADC ------------------------------
+//  /* Enable ADC3, DMA2 and GPIO clocks ****************************************/
+//  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2 | RCC_AHB1Periph_GPIOC, ENABLE);
+//  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC3, ENABLE);
+//	
+//	
 
-//	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
-//	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-//	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1, ENABLE);
-
-//	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;
-//	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;
-//	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
-//	GPIO_Init(GPIOA, &GPIO_InitStruct);
-
-//	/*ADC_InitStruct.
-//	 ADC_InitStruct.ADC_ContinuousConvMode = ENABLE;
-//	 ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;
-//	 ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConvEdge_None;
-//	 ADC_InitStruct.ADC_Resolution = ADC_Resolution_8b;
-//	 ADC_InitStruct.ADC_ScanConvMode = DISABLE;
-//	 ADC_Init(ADC1, &ADC_InitStruct);*/
-//	ADC_DeInit();
-//	ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;	//data converted will be shifted to right
-//	ADC_InitStruct.ADC_Resolution = ADC_Resolution_12b;	//Input voltage is converted into a 12bit number giving a maximum value of 4096
-//	ADC_InitStruct.ADC_ContinuousConvMode = ENABLE; //the conversion is continuous, the input data is converted more than once
-//	ADC_InitStruct.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None; //no trigger for conversion
-//	ADC_InitStruct.ADC_ScanConvMode = DISABLE; //The scan is configured in one channel
-//	ADC_Init(ADC1, &ADC_InitStruct); //Initialize ADC with the previous configuration
-//	//Enable ADC conversion
-//	ADC_Cmd(ADC1, ENABLE);
-//	//Select the channel to be read from
-//	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_3Cycles);
-//	ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
+//  /* DMA2 Stream0 channel2 configuration **************************************/
+//  DMA_InitStructure.DMA_Channel = DMA_Channel_2;  
+//  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&ADC3->DR);
+//  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)(&adcMeasurements);
+//  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory;
+//  DMA_InitStructure.DMA_BufferSize = 270;
+//  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+//  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+//  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+//  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+//  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+//  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+//  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;         
+//  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
+//  DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
+//  DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+//  DMA_Init(DMA2_Stream0, &DMA_InitStructure);
+//  DMA_Cmd(DMA2_Stream0, ENABLE);
 
 
+//	DMA_ITConfig(DMA2_Stream0, DMA_IT_TC, ENABLE);
 
-
-
-
-//	NVIC_InitStructure.NVIC_IRQChannel = ADC_IRQn;
+//	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream0_IRQn;
 //	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 //	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
 //	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
 //	NVIC_Init(&NVIC_InitStructure);
 //	
-//	
-//	DMA_InitStruct.DMA_BufferSize = 1;
-//	DMA_InitStruct.DMA_Channel = DMA_Channel_0;
-//	DMA_InitStruct.DMA_DIR = DMA_DIR_PeripheralToMemory;
-//	DMA_InitStruct.DMA_FIFOMode = DMA_FIFOMode_Disable;
-//	DMA_InitStruct.DMA_FIFOThreshold = DMA_FIFOStatus_HalfFull;
-//	DMA_InitStruct.DMA_Memory0BaseAddr = (uint32_t)(&adcMeasurements);
-//	DMA_InitStruct.DMA_MemoryBurst = DMA_MemoryBurst_Single;
-//	DMA_InitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-//	DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Disable;
-//	DMA_InitStruct.DMA_Mode = DMA_Mode_Circular;
-//	DMA_InitStruct.DMA_PeripheralBaseAddr = (uint32_t)(&ADC3->DR);
-//	DMA_InitStruct.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-//	DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-//	DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-//	DMA_InitStruct.DMA_Priority = DMA_Priority_High;
-//	
-//	/*DMA_Init(DMA_Channel_0, &DMA_InitStruct);
-//	DMA_Cmd(DMA_Channel_0, ENABLE);
-//	ADC_DMACmd(DMA_Channel_0, ENABLE);*/
-//	
-//	
-//	
-//	
-//	
-//	
-//  DMA_Init(DMA2_Stream0, &DMA_InitStruct);
-//  DMA_Cmd(DMA2_Stream0, ENABLE);
-
+//  /* Configure ADC3 Channel7 pin as analog input ******************************/
+//  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+//  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
+//  GPIO_Init(GPIOC, &GPIO_InitStructure);
 
 //  /* ADC Common Init **********************************************************/
 //  ADC_CommonInitStructure.ADC_Mode = ADC_Mode_Independent;
@@ -313,7 +289,7 @@ void MainTask(void * pvParameters)
 //  ADC_CommonInitStructure.ADC_TwoSamplingDelay = ADC_TwoSamplingDelay_5Cycles;
 //  ADC_CommonInit(&ADC_CommonInitStructure);
 
-//  /* ADC3 Init ***************************************************************
+//  /* ADC3 Init ****************************************************************/
 //  ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
 //  ADC_InitStructure.ADC_ScanConvMode = DISABLE;
 //  ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
@@ -321,7 +297,10 @@ void MainTask(void * pvParameters)
 //  ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
 //  ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
 //  ADC_InitStructure.ADC_NbrOfConversion = 1;
-//  ADC_Init(ADC3, &ADC_InitStructure);*/
+//  ADC_Init(ADC3, &ADC_InitStructure);
+
+//  /* ADC3 regular channel7 configuration *************************************/
+//  ADC_RegularChannelConfig(ADC3, ADC_Channel_10, 1, ADC_SampleTime_3Cycles);
 
 // /* Enable DMA request after last transfer (Single-ADC mode) */
 //  ADC_DMARequestAfterLastTransferCmd(ADC3, ENABLE);
@@ -333,96 +312,96 @@ void MainTask(void * pvParameters)
 //  ADC_Cmd(ADC3, ENABLE);
 //	
 //	
+//	for (i = 0; i < 320; ++i)
+//	{
+//		dane[i].X = i;
+//	}
+//	
+
+//	
+
+//	LCD_Clear(Blue);
+//	LCD_DisplayStringLine(Line0,"heeeeeeeeeeeeeeeelo");
+//	
+//	//while(1)
+//	NVIC_DisableIRQ(DMA2_Stream0_IRQn);
+//	for(i=0;i<10;++i)
+//		UDPsend_packet("123456798",9);
+//	
+//	vTaskDelay(1000);
+//	ADC_SoftwareStartConv(ADC3);			//Start the conversion
+//	NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+//	
 	
+	
+	
+	
+	
+	
+	
+	// ---------------------------------- DAC ----------------------------
+	
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1 | RCC_AHB1Periph_GPIOA, ENABLE);
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE);
 
-  /* Enable ADC3, DMA2 and GPIO clocks ****************************************/
-  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2 | RCC_AHB1Periph_GPIOC, ENABLE);
-  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC3, ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_4 | GPIO_Pin_5;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
 
-  /* DMA2 Stream0 channel2 configuration **************************************/
-  DMA_InitStructure.DMA_Channel = DMA_Channel_2;  
-  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&ADC3->DR);
-  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)(&adcMeasurements);
-  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory;
-  DMA_InitStructure.DMA_BufferSize = 270;
+  /* Time base configuration */
+  TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
+  TIM_TimeBaseStructure.TIM_Period = 0xFF;
+  TIM_TimeBaseStructure.TIM_Prescaler = 0;
+  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
+  TIM_TimeBaseInit(TIM6, &TIM_TimeBaseStructure);
+
+  /* TIM6 TRGO selection */
+  TIM_SelectOutputTrigger(TIM6, TIM_TRGOSource_Update);
+  
+  /* TIM6 enable counter */
+  TIM_Cmd(TIM6, ENABLE);
+	
+	
+  /* DAC channel1 Configuration */
+  DAC_InitStructure.DAC_Trigger = DAC_Trigger_T6_TRGO;
+  DAC_InitStructure.DAC_WaveGeneration = DAC_WaveGeneration_None;
+  DAC_InitStructure.DAC_OutputBuffer = DAC_OutputBuffer_Enable;
+  DAC_Init(DAC_Channel_1, &DAC_InitStructure);
+
+  /* DMA1_Stream6 channel7 configuration **************************************/  
+  DMA_DeInit(DMA1_Stream5);
+  DMA_InitStructure.DMA_Channel = DMA_Channel_7;  
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (u32_t)(&DAC->DHR8R1);//DAC_DHR8R1_ADDRESS
+  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&Escalator8bit;
+  DMA_InitStructure.DMA_BufferSize = 6;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+  DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
   DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
   DMA_InitStructure.DMA_Priority = DMA_Priority_High;
   DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;         
   DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
   DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-  DMA_Init(DMA2_Stream0, &DMA_InitStructure);
-  DMA_Cmd(DMA2_Stream0, ENABLE);
+  DMA_Init(DMA1_Stream5, &DMA_InitStructure);    
 
+  /* Enable DMA1_Stream6 */
+  DMA_Cmd(DMA1_Stream5, ENABLE);
+  
+  /* Enable DAC Channel1 */
+  DAC_Cmd(DAC_Channel_1, ENABLE);
 
-	DMA_ITConfig(DMA2_Stream0, DMA_IT_TC, ENABLE);
-
-	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream0_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_Init(&NVIC_InitStructure);
-	
-  /* Configure ADC3 Channel7 pin as analog input ******************************/
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
-  GPIO_Init(GPIOC, &GPIO_InitStructure);
-
-  /* ADC Common Init **********************************************************/
-  ADC_CommonInitStructure.ADC_Mode = ADC_Mode_Independent;
-  ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div2;
-  ADC_CommonInitStructure.ADC_DMAAccessMode = ADC_DMAAccessMode_Disabled;
-  ADC_CommonInitStructure.ADC_TwoSamplingDelay = ADC_TwoSamplingDelay_5Cycles;
-  ADC_CommonInit(&ADC_CommonInitStructure);
-
-  /* ADC3 Init ****************************************************************/
-  ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
-  ADC_InitStructure.ADC_ScanConvMode = DISABLE;
-  ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
-  ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
-  ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
-  ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
-  ADC_InitStructure.ADC_NbrOfConversion = 1;
-  ADC_Init(ADC3, &ADC_InitStructure);
-
-  /* ADC3 regular channel7 configuration *************************************/
-  ADC_RegularChannelConfig(ADC3, ADC_Channel_10, 1, ADC_SampleTime_3Cycles);
-
- /* Enable DMA request after last transfer (Single-ADC mode) */
-  ADC_DMARequestAfterLastTransferCmd(ADC3, ENABLE);
-
-  /* Enable ADC3 DMA */
-  ADC_DMACmd(ADC3, ENABLE);
-
-  /* Enable ADC3 */
-  ADC_Cmd(ADC3, ENABLE);
+  /* Enable DMA for DAC Channel1 */
+  DAC_DMACmd(DAC_Channel_1, ENABLE);
 	
 	
-	for (i = 0; i < 320; ++i)
-	{
-		dane[i].X = i;
-	}
 	
-
-	
-
-	LCD_Clear(Blue);
-	LCD_DisplayStringLine(Line0,"heeeeeeeeeeeeeeeelo");
-	
-	//while(1)
-	NVIC_DisableIRQ(DMA2_Stream0_IRQn);
-	for(i=0;i<10;++i)
-		UDPsend_packet("123456798",9);
-	
-	vTaskDelay(1000);
-	ADC_SoftwareStartConv(ADC3);			//Start the conversion
-	NVIC_EnableIRQ(DMA2_Stream0_IRQn);
-	
+	aaaaaa = 0;
 	while (1)
 	{
 		if( aaaaaa == 1 )
