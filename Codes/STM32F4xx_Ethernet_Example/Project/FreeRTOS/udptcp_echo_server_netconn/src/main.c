@@ -111,8 +111,13 @@ DMA_InitTypeDef DMA_InitStruct;
 extern NVIC_InitTypeDef NVIC_InitStructure;
 ADC_CommonInitTypeDef ADC_CommonInitStructure;
 TIM_TimeBaseInitTypeDef    TIM_TimeBaseStructure;
+ADC_InitTypeDef       ADC_InitStructure;
+ADC_CommonInitTypeDef ADC_CommonInitStructure;
+DMA_InitTypeDef       DMA_InitStructure;
+GPIO_InitTypeDef      GPIO_InitStructure;
 volatile Point dane[330];
 DAC_InitTypeDef  DAC_InitStructure;
+TIM_OCInitTypeDef  TIM_OCInitStructure;
 
 const uint16_t Sine12bit[32] = {
                       2047, 2447, 2831, 3185, 3498, 3750, 3939, 4056, 4095, 4056,
@@ -155,193 +160,22 @@ void UDPreceive_packet(void * destination, u16_t len)
 	netbuf_delete(UDPbuffer);
 }
 
-typedef struct
-{
-	u32_t len;
-	u8_t tab[320];
-} Cluster;
 
-//void MainTask(void * pvParameters)
-//{
-//	int i = 0;
-//	Cluster points;
-//	UDPsetup_network();
-//	for (i = 0; i < 320; ++i)
-//	{
-//		dane[i].X = i;
-//	}
-//	LCD_Clear(Black);
-//	while (1)
-//	{
-//		/*UDPbuffer = netconn_recv(Connection);
-//		netbuf_copy(UDPbuffer, &points, 324);
-//		netbuf_delete(UDPbuffer);*/
-//		UDPreceive_packet(&points, 324);
-//		for (i = 0; i < 320; ++i)
-//			dane[i].Y = points.tab[i];
-//		LCD_Clear(Black);
-//		LCD_PolyLine(dane, 320);
-//	}
-//
-//	LCD_Clear(Black);
-//
-//}
+
+
+
+
 volatile u16_t adcMeasurements[300];
 volatile u16_t num = 0; 
 volatile u8_t aaaaaa = 0;
 //xSemaphoreHandle xSemaphore;
 char tekst[50];
 	
-void DMA2_Stream0_IRQHandler()
+
+void BasicDAC_Init()
 {
-	if( DMA_GetFlagStatus(DMA2_Stream0, DMA_FLAG_TCIF0) )
-	{
-		DMA_ClearITPendingBit(DMA2_Stream0, DMA_IT_TCIF0);
-		aaaaaa = 1;
-	}
-	//UDPsend_packet(adcMeasurements,540);
-/*	LCD_Clear(Blue);
-	sprintf(tekst,"%d",adcMeasurements[0]);
-	LCD_DisplayStringLine(Line0,tekst);*/
-}
-
-void ADC_IRQHandler()
-{
-	/*//static signed portBASE_TYPE xHigherPriorityTaskWoken; 
-	if( ADC_GetITStatus(ADC1, ADC_IT_EOC) )
-	{
-		ADC_ClearITPendingBit(ADC1, ADC_IT_EOC);
-		adcMeasurements[num] = ADC_GetConversionValue(ADC1);
-		++num;
-		if( num == 270 )
-		{
-			num = 0;
-			aaaaaa = 1;
-			//xSemaphoreGiveFromISR( xSemaphore, &xHigherPriorityTaskWoken );
-		}
-	}
-	//portYIELD_FROM_ISR( xHigherPriorityTaskWoken );*/
-}
-
-void MainTask(void * pvParameters)
-{
-	err_t err;
-	ADC_InitTypeDef       ADC_InitStructure;
-  ADC_CommonInitTypeDef ADC_CommonInitStructure;
-  DMA_InitTypeDef       DMA_InitStructure;
-  GPIO_InitTypeDef      GPIO_InitStructure;
-
-
-	int i = 0;
-	u16_t prev = 0;
-	Point dane[330];
 	
-	vTaskDelay(1000);
-	//LWIP_UNUSED_ARG(arg);
-
-  UDPsetup_network();
-//	
-//// --------------------------- ADC ------------------------------
-//  /* Enable ADC3, DMA2 and GPIO clocks ****************************************/
-//  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2 | RCC_AHB1Periph_GPIOC, ENABLE);
-//  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC3, ENABLE);
-//	
-//	
-
-//  /* DMA2 Stream0 channel2 configuration **************************************/
-//  DMA_InitStructure.DMA_Channel = DMA_Channel_2;  
-//  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&ADC3->DR);
-//  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)(&adcMeasurements);
-//  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory;
-//  DMA_InitStructure.DMA_BufferSize = 270;
-//  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-//  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
-//  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-//  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-//  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
-//  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
-//  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;         
-//  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
-//  DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
-//  DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-//  DMA_Init(DMA2_Stream0, &DMA_InitStructure);
-//  DMA_Cmd(DMA2_Stream0, ENABLE);
-
-
-//	DMA_ITConfig(DMA2_Stream0, DMA_IT_TC, ENABLE);
-
-//	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream0_IRQn;
-//	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-//	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-//	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-//	NVIC_Init(&NVIC_InitStructure);
-//	
-//  /* Configure ADC3 Channel7 pin as analog input ******************************/
-//  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
-//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
-//  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
-//  GPIO_Init(GPIOC, &GPIO_InitStructure);
-
-//  /* ADC Common Init **********************************************************/
-//  ADC_CommonInitStructure.ADC_Mode = ADC_Mode_Independent;
-//  ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div2;
-//  ADC_CommonInitStructure.ADC_DMAAccessMode = ADC_DMAAccessMode_Disabled;
-//  ADC_CommonInitStructure.ADC_TwoSamplingDelay = ADC_TwoSamplingDelay_5Cycles;
-//  ADC_CommonInit(&ADC_CommonInitStructure);
-
-//  /* ADC3 Init ****************************************************************/
-//  ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
-//  ADC_InitStructure.ADC_ScanConvMode = DISABLE;
-//  ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
-//  ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
-//  ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
-//  ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
-//  ADC_InitStructure.ADC_NbrOfConversion = 1;
-//  ADC_Init(ADC3, &ADC_InitStructure);
-
-//  /* ADC3 regular channel7 configuration *************************************/
-//  ADC_RegularChannelConfig(ADC3, ADC_Channel_10, 1, ADC_SampleTime_3Cycles);
-
-// /* Enable DMA request after last transfer (Single-ADC mode) */
-//  ADC_DMARequestAfterLastTransferCmd(ADC3, ENABLE);
-
-//  /* Enable ADC3 DMA */
-//  ADC_DMACmd(ADC3, ENABLE);
-
-//  /* Enable ADC3 */
-//  ADC_Cmd(ADC3, ENABLE);
-//	
-//	
-//	for (i = 0; i < 320; ++i)
-//	{
-//		dane[i].X = i;
-//	}
-//	
-
-//	
-
-//	LCD_Clear(Blue);
-//	LCD_DisplayStringLine(Line0,"heeeeeeeeeeeeeeeelo");
-//	
-//	//while(1)
-//	NVIC_DisableIRQ(DMA2_Stream0_IRQn);
-//	for(i=0;i<10;++i)
-//		UDPsend_packet("123456798",9);
-//	
-//	vTaskDelay(1000);
-//	ADC_SoftwareStartConv(ADC3);			//Start the conversion
-//	NVIC_EnableIRQ(DMA2_Stream0_IRQn);
-//	
-	
-	
-	
-	
-	
-	
-	
-	// ---------------------------------- DAC ----------------------------
-	
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
+	//RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA1 | RCC_AHB1Periph_GPIOA, ENABLE);
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_DAC, ENABLE);
 
@@ -351,44 +185,44 @@ void MainTask(void * pvParameters)
   GPIO_Init(GPIOA, &GPIO_InitStructure);
 
   /* Time base configuration */
-  TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
-  TIM_TimeBaseStructure.TIM_Period = 0xFF;
-  TIM_TimeBaseStructure.TIM_Prescaler = 0;
-  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
-  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
-  TIM_TimeBaseInit(TIM6, &TIM_TimeBaseStructure);
+//  TIM_TimeBaseStructInit(&TIM_TimeBaseStructure);
+//  TIM_TimeBaseStructure.TIM_Period = 0xFF;
+//  TIM_TimeBaseStructure.TIM_Prescaler = 0;
+//  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+//  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up; 
+//  TIM_TimeBaseInit(TIM6, &TIM_TimeBaseStructure);
 
-  /* TIM6 TRGO selection */
-  TIM_SelectOutputTrigger(TIM6, TIM_TRGOSource_Update);
-  
-  /* TIM6 enable counter */
-  TIM_Cmd(TIM6, ENABLE);
-	
+//  /* TIM6 TRGO selection */
+//  TIM_SelectOutputTrigger(TIM6, TIM_TRGOSource_Update);
+//  
+//  /* TIM6 enable counter */
+//  TIM_Cmd(TIM6, ENABLE);
+//	
 	
   /* DAC channel1 Configuration */
-  DAC_InitStructure.DAC_Trigger = DAC_Trigger_T6_TRGO;
+  DAC_InitStructure.DAC_Trigger = DAC_Trigger_T2_TRGO;
   DAC_InitStructure.DAC_WaveGeneration = DAC_WaveGeneration_None;
   DAC_InitStructure.DAC_OutputBuffer = DAC_OutputBuffer_Enable;
   DAC_Init(DAC_Channel_1, &DAC_InitStructure);
 
-  /* DMA1_Stream6 channel7 configuration **************************************/  
+/* DMA1_Stream6 channel7 configuration **************************************/  
   DMA_DeInit(DMA1_Stream5);
   DMA_InitStructure.DMA_Channel = DMA_Channel_7;  
-  DMA_InitStructure.DMA_PeripheralBaseAddr = (u32_t)(&DAC->DHR8R1);//DAC_DHR8R1_ADDRESS
-  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&Escalator8bit;
-  DMA_InitStructure.DMA_BufferSize = 6;
-  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
-  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&DAC->DHR12R1);// DAC_DHR12R2_ADDRESS;
+  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)&Sine12bit;
   DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToPeripheral;
+  DMA_InitStructure.DMA_BufferSize = 32;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
   DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
   DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
   DMA_InitStructure.DMA_Priority = DMA_Priority_High;
-  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;         
+  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
   DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
   DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
   DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-  DMA_Init(DMA1_Stream5, &DMA_InitStructure);    
+  DMA_Init(DMA1_Stream5, &DMA_InitStructure);
 
   /* Enable DMA1_Stream6 */
   DMA_Cmd(DMA1_Stream5, ENABLE);
@@ -398,29 +232,122 @@ void MainTask(void * pvParameters)
 
   /* Enable DMA for DAC Channel1 */
   DAC_DMACmd(DAC_Channel_1, ENABLE);
+}
+
+
+uint16_t CCR1_Val = 333;
+uint16_t CCR2_Val = 249;
+uint16_t CCR3_Val = 166;
+uint16_t CCR4_Val = 83;
+void TIM_Config(void)
+{
+  GPIO_InitTypeDef GPIO_InitStructure;
+
+  /* TIM2 clock enable */
+  RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+
+  /* GPIOC and GPIOB clock enable */
+  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA | RCC_AHB1Periph_GPIOC | RCC_AHB1Periph_GPIOB, ENABLE);
+  
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_15;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP ;
+  GPIO_Init(GPIOA, &GPIO_InitStructure); 
+	
+  /* GPIOC Configuration: TIM2 CH1 (PC6) and TIM2 CH2 (PC7) */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 ;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP ;
+  GPIO_Init(GPIOC, &GPIO_InitStructure); 
+  
+  /* GPIOB Configuration:  TIM2 CH3 (PB0) and TIM2 CH4 (PB1) */
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP ;
+  GPIO_Init(GPIOB, &GPIO_InitStructure); 
+
+  /* Connect TIM2 pins to AF2 */  
+  GPIO_PinAFConfig(GPIOA, GPIO_PinSource15, GPIO_AF_TIM2);
+  GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_TIM2); 
+  GPIO_PinAFConfig(GPIOB, GPIO_PinSource0, GPIO_AF_TIM2);
+  GPIO_PinAFConfig(GPIOB, GPIO_PinSource1, GPIO_AF_TIM2); 
 	
 	
+  /* Time base configuration */
+  TIM_TimeBaseStructure.TIM_Period = 665;
+  TIM_TimeBaseStructure.TIM_Prescaler = (uint16_t) ((SystemCoreClock /2) / 28000000) - 1;;
+  TIM_TimeBaseStructure.TIM_ClockDivision = 0;
+  TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
+
+  TIM_TimeBaseInit(TIM2, &TIM_TimeBaseStructure);
+
+  /* PWM1 Mode configuration: Channel1 */
+  TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
+  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+  TIM_OCInitStructure.TIM_Pulse = 100; //CCR1_Val;
+  TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
+
+  TIM_OC1Init(TIM2, &TIM_OCInitStructure);
+
+  TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Enable);
+
+  /* PWM1 Mode configuration: Channel2 */
+  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+  TIM_OCInitStructure.TIM_Pulse = CCR2_Val;
+
+  TIM_OC2Init(TIM2, &TIM_OCInitStructure);
+
+  TIM_OC2PreloadConfig(TIM2, TIM_OCPreload_Enable);
+
+  /* PWM1 Mode configuration: Channel3 */
+  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+  TIM_OCInitStructure.TIM_Pulse = CCR3_Val;
+
+  TIM_OC3Init(TIM2, &TIM_OCInitStructure);
+
+  TIM_OC3PreloadConfig(TIM2, TIM_OCPreload_Enable);
+
+  /* PWM1 Mode configuration: Channel4 */
+  TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
+  TIM_OCInitStructure.TIM_Pulse = CCR4_Val;
+
+  TIM_OC4Init(TIM2, &TIM_OCInitStructure);
+
+  TIM_OC4PreloadConfig(TIM2, TIM_OCPreload_Enable);
+
+  TIM_ARRPreloadConfig(TIM2, ENABLE);
+
+  /* TIM2 enable counter */
+  TIM_Cmd(TIM2, ENABLE);
 	
-	aaaaaa = 0;
+	TIM_SelectOutputTrigger(TIM2, TIM_TRGOSource_OC1);
+}
+
+void MainTask(void * pvParameters)
+{
+	err_t err;
+	
+
+
+	int i = 0;
+	u16_t prev = 0;
+	Point dane[330];
+
+	//LWIP_UNUSED_ARG(arg);
+
+  UDPsetup_network();
+	
+	TIM_Config();
+	BasicDAC_Init();
+	
 	while (1)
 	{
-		if( aaaaaa == 1 )
-		{
-			//NVIC_DisableIRQ(DMA2_Stream0_IRQn);
-			aaaaaa = 0;
-			
-			
-			UDPsend_packet(adcMeasurements,540);
-			/*vTaskDelay(10);
-			
-			UDPsend_packet(adcMeasurements,2);
-			
-			sprintf(tekst,"%d",adcMeasurements[0]);
-			LCD_Clear(Blue);
-			LCD_DisplayStringLine(Line0,tekst);
-			*/
-			//NVIC_EnableIRQ(DMA2_Stream0_IRQn);
-		}
 	}
 }
 
