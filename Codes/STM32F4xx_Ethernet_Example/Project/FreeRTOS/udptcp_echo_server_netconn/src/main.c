@@ -326,7 +326,7 @@ void TIM_Config(void)
   /* TIM2 enable counter */
   TIM_Cmd(TIM2, ENABLE);
 	
-	TIM_SelectOutputTrigger(TIM2, TIM_TRGOSource_OC1);
+	TIM_SelectOutputTrigger(TIM2, TIM_TRGOSource_OC1); // <--------------------- here the trigger source
 }
 
 void MainTask(void * pvParameters)
@@ -345,9 +345,55 @@ void MainTask(void * pvParameters)
 	
 	TIM_Config();
 	BasicDAC_Init();
+
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+
+	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;
+	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+	ADC_DeInit();
+	ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;	//data converted will be shifted to right
+	ADC_InitStruct.ADC_Resolution = ADC_Resolution_12b;	//Input voltage is converted into a 12bit number giving a maximum value of 4096
+	ADC_InitStruct.ADC_ContinuousConvMode = ENABLE; //the conversion is continuous, the input data is converted more than once
+	ADC_InitStruct.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_Falling; //no trigger for conversion
+	ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T2_CC2;
+	ADC_InitStruct.ADC_ScanConvMode = DISABLE; //The scan is configured in one channel
+	ADC_Init(ADC1, &ADC_InitStruct); //Initialize ADC with the previous configuration
+	//Enable ADC conversion
+	ADC_Cmd(ADC1, ENABLE);
+	//Select the channel to be read from
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_3Cycles);
+	ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
+
+
+
+
+
+
+	NVIC_InitStructure.NVIC_IRQChannel = ADC_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_Init(&NVIC_InitStructure);
+
 	
 	while (1)
 	{
+
+			for (i = 0; i < 270; ++i)
+			{
+				while (!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC));
+				adcMeasurements[i] = ADC_GetConversionValue(ADC1);
+			}
+		
+			UDPsend_packet(adcMeasurements,540);
+
+		
 	}
 }
 

@@ -1056,3 +1056,57 @@ Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet
 Erase Done.
 Programming Done.
 Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(393): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+..\src\main.c(334): warning:  #177-D: variable "err" was declared but never referenced
+..\src\main.c(339): warning:  #177-D: variable "prev" was declared but never referenced
+..\src\main.c(340): warning:  #177-D: variable "dane" was declared but never referenced
+..\src\main.c(397): error:  #169: expected a declaration
+..\src\main.c(432): warning:  #12-D: parsing restarts here after previous syntax error
+..\src\main.c(440): error:  #79: expected a type specifier
+..\src\main.c(440): error:  #79: expected a type specifier
+..\src\main.c(440): error:  #79: expected a type specifier
+..\src\main.c(440): error:  #79: expected a type specifier
+..\src\main.c(440): error:  #79: expected a type specifier
+..\src\main.c(440): error:  #79: expected a type specifier
+..\src\main.c(440): error:  #79: expected a type specifier
+..\src\main.c(440): error:  #79: expected a type specifier
+..\src\main.c(440): warning:  #77-D: this declaration has no storage class or type specifier
+..\src\main.c(440): error:  #147-D: declaration is incompatible with "signed long xTaskGenericCreate(pdTASK_CODE, const signed char *const, unsigned short, void *, unsigned long, xTaskHandle *, unsigned long *, const xMemoryRegion *const)" (declared at line 1271 of "..\..\..\..\Utilities\FreeRTOS_v6.1.0\include\task.h")
+..\src\main.c(446): warning:  #1295-D: Deprecated declaration vTaskStartScheduler - give arg types
+..\src\main.c(446): warning:  #77-D: this declaration has no storage class or type specifier
+..\src\main.c(446): error:  #147: declaration is incompatible with "void vTaskStartScheduler(void)" (declared at line 791 of "..\..\..\..\Utilities\FreeRTOS_v6.1.0\include\task.h")
+..\src\main.c(449): error:  #169: expected a declaration
+..\src\main.c(451): error:  #169: expected a declaration
+..\src\main.c(480): warning:  #12-D: parsing restarts here after previous syntax error
+..\src\main.c(482): error:  #169: expected a declaration
+..\src\main.c(505): warning: At end of source:  #12-D: parsing restarts here after previous syntax error
+".\Discover-More\Project.axf" - 14 Errors, 10 Warning(s).
+Target not created
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(393): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+..\src\main.c(334): warning:  #177-D: variable "err" was declared but never referenced
+..\src\main.c(339): warning:  #177-D: variable "prev" was declared but never referenced
+..\src\main.c(340): warning:  #177-D: variable "dane" was declared but never referenced
+linking...
+Program Size: Code=50554 RO-data=5326 RW-data=456 ZI-data=53528  
+".\Discover-More\Project.axf" - 0 Errors, 4 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(394): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+..\src\main.c(334): warning:  #177-D: variable "err" was declared but never referenced
+..\src\main.c(339): warning:  #177-D: variable "prev" was declared but never referenced
+..\src\main.c(340): warning:  #177-D: variable "dane" was declared but never referenced
+linking...
+Program Size: Code=50562 RO-data=5326 RW-data=456 ZI-data=53528  
+".\Discover-More\Project.axf" - 0 Errors, 4 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
