@@ -115,9 +115,11 @@ ADC_InitTypeDef       ADC_InitStructure;
 ADC_CommonInitTypeDef ADC_CommonInitStructure;
 DMA_InitTypeDef       DMA_InitStructure;
 GPIO_InitTypeDef      GPIO_InitStructure;
+USART_InitTypeDef USARTInit;
 volatile Point dane[330];
 DAC_InitTypeDef  DAC_InitStructure;
 TIM_OCInitTypeDef  TIM_OCInitStructure;
+USART_InitTypeDef USART_InitStructure;
 
 const uint16_t Sine12bit[32] = {
                       2047, 2447, 2831, 3185, 3498, 3750, 3939, 4056, 4095, 4056,
@@ -126,6 +128,83 @@ const uint16_t Sine12bit[32] = {
 const uint8_t Escalator8bit[6] = {0x0, 0x33, 0x66, 0x99, 0xCC, 0xFF};
 
 
+void UART_Setup()
+{
+	GPIO_InitTypeDef GPIO_InitStruct; // this is for the GPIO pins used as TX and RX
+	USART_InitTypeDef USART_InitStruct; // this is for the USART1 initilization
+	NVIC_InitTypeDef NVIC_InitStructure; // this is used to configure the NVIC (nested vector interrupt controller)
+
+	/* enable APB2 peripheral clock for USART1 
+	 * note that only USART1 and USART6 are connected to APB2
+	 * the other USARTs are connected to APB1
+	 */
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1, ENABLE);
+
+	/* enable the peripheral clock for the pins used by 
+	 * USART1, PB6 for TX and PB7 for RX
+	 */
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+
+	/* This sequence sets up the TX and RX pins 
+	 * so they work correctly with the USART1 peripheral
+	 */
+	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7; // Pins 6 (TX) and 7 (RX) are used
+	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF; 			// the pins are configured as alternate function so the USART peripheral has access to them
+	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;		// this defines the IO speed and has nothing to do with the baudrate!
+	GPIO_InitStruct.GPIO_OType = GPIO_OType_PP;			// this defines the output type as push pull mode (as opposed to open drain)
+	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_UP;			// this activates the pullup resistors on the IO pins
+	GPIO_Init(GPIOB, &GPIO_InitStruct);					// now all the values are passed to the GPIO_Init() function which sets the GPIO registers
+
+	/* The RX and TX pins are now connected to their AF
+	 * so that the USART1 can take over control of the 
+	 * pins
+	 */
+	GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_USART1); //
+	GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_USART1);
+
+	/* Now the USART_InitStruct is used to define the 
+	 * properties of USART1 
+	 */
+	USART_InitStruct.USART_BaudRate = 115200;				// the baudrate is set to the value we passed into this init function
+	USART_InitStruct.USART_WordLength = USART_WordLength_8b;// we want the data frame size to be 8 bits (standard)
+	USART_InitStruct.USART_StopBits = USART_StopBits_1;		// we want 1 stop bit (standard)
+	USART_InitStruct.USART_Parity = USART_Parity_No;		// we don't want a parity bit (standard)
+	USART_InitStruct.USART_HardwareFlowControl = USART_HardwareFlowControl_None; // we don't want flow control (standard)
+	USART_InitStruct.USART_Mode = USART_Mode_Tx | USART_Mode_Rx; // we want to enable the transmitter and the receiver
+	USART_Init(USART1, &USART_InitStruct);					// again all the properties are passed to the USART_Init function which takes care of all the bit setting
+
+
+	/* Here the USART1 receive interrupt is enabled
+	 * and the interrupt controller is configured 
+	 * to jump to the USART1_IRQHandler() function
+	 * if the USART1 receive interrupt occurs
+	 */
+	USART_ITConfig(USART1, USART_IT_RXNE, ENABLE); // enable the USART1 receive interrupt 
+
+	NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn;		 // we want to configure the USART1 interrupts
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;// this sets the priority group of the USART1 interrupts
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;		 // this sets the subpriority inside the group
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;			 // the USART1 interrupts are globally enabled
+	NVIC_Init(&NVIC_InitStructure);							 // the properties are passed to the NVIC_Init function which takes care of the low level stuff	
+
+	// finally this enables the complete USART1 peripheral
+	USART_Cmd(USART1, ENABLE);
+}
+
+void putcharUsart(char x)
+{
+	while(USART_GetFlagStatus(USART1, USART_FLAG_TXE) == RESET);
+	USART_SendData(USART1, x);
+}
+void USARTPrintString(char * x)
+{
+	while(*x)
+	{
+		putcharUsart(*x);
+		x++;
+	}
+}
+#define DEBUG(x) USARTPrintString(x)
 int UDPsetup_network()
 {
 	err_t err;
@@ -244,16 +323,16 @@ u16_t ADCIndex = 0;
 unsigned char Ssend = 0;
 void ADC_IRQHandler()
 {
-	if( ADC_GetITStatus(ADC1, ADC_IT_EOC) )
+	if( ADC_GetITStatus(ADC3, ADC_IT_EOC) )
 	{
-		adcMeasurements[ADCIndex++] = ADC_GetConversionValue(ADC1);
+		/*adcMeasurements[ADCIndex++] = ADC_GetConversionValue(ADC1);
 		if( ADCIndex == 270 )
 		{
 			Ssend = 1;
 			ADCIndex = 0;
 			
-		}
-		ADC_ClearITPendingBit(ADC1, ADC_IT_EOC);
+		}*/
+		ADC_ClearITPendingBit(ADC3, ADC_IT_EOC);
 		GPIO_ToggleBits(GPIOA, GPIO_Pin_0);
 	}	
 }
@@ -355,12 +434,24 @@ void TIM_Config(void)
 	
 	TIM_SelectOutputTrigger(TIM2, TIM_TRGOSource_OC1); // <--------------------- here the trigger source for DAC1
 }
-
+void DMA2_Stream0_IRQHandler()
+{
+	DEBUG("in DMA IRQ\n\r");
+	if( DMA_GetFlagStatus(DMA2_Stream0, DMA_FLAG_TCIF0) )
+	{
+		DMA_ClearITPendingBit(DMA2_Stream0, DMA_IT_TCIF0);
+		Ssend = 1;
+	}
+	//UDPsend_packet(adcMeasurements,540);
+/*	LCD_Clear(Blue);
+	sprintf(tekst,"%d",adcMeasurements[0]);
+	LCD_DisplayStringLine(Line0,tekst);*/
+}
 
 volatile u8_t i;
 void MainTask(void * pvParameters)
 {
-	
+	UART_Setup();
 	UDPsetup_network();
 	
 	
@@ -368,14 +459,71 @@ void MainTask(void * pvParameters)
 	BasicDAC_Init();
 
 
-	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2 | RCC_AHB1Periph_GPIOC, ENABLE);
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC3, ENABLE);
+
+  /* DMA2 Stream0 channel2 configuration **************************************/
+  DMA_InitStructure.DMA_Channel = DMA_Channel_2;  
+  DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&ADC3->DR);
+  DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)(&adcMeasurements);
+  DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory;
+  DMA_InitStructure.DMA_BufferSize = 270;
+  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+  DMA_InitStructure.DMA_Mode = DMA_Mode_Circular;
+  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;         
+  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_HalfFull;
+  DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
+  DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+  DMA_Init(DMA2_Stream0, &DMA_InitStructure);
+  DMA_Cmd(DMA2_Stream0, ENABLE);
+
+
+	DMA_ITConfig(DMA2_Stream0, DMA_IT_TC, ENABLE);
+
+	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream0_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+	NVIC_Init(&NVIC_InitStructure);
+
+  /* Configure ADC3 Channel7 pin as analog input ******************************/
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AN;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
+  GPIO_Init(GPIOC, &GPIO_InitStructure);
+
+  /* ADC Common Init **********************************************************/
+  ADC_CommonInitStructure.ADC_Mode = ADC_Mode_Independent;
+  ADC_CommonInitStructure.ADC_Prescaler = ADC_Prescaler_Div2;
+  ADC_CommonInitStructure.ADC_DMAAccessMode = ADC_DMAAccessMode_Disabled;
+  ADC_CommonInitStructure.ADC_TwoSamplingDelay = ADC_TwoSamplingDelay_5Cycles;
+  ADC_CommonInit(&ADC_CommonInitStructure);
+
+//  /* ADC3 Init ****************************************************************/
+//  ADC_InitStructure.ADC_Resolution = ADC_Resolution_12b;
+//  ADC_InitStructure.ADC_ScanConvMode = DISABLE;
+//  ADC_InitStructure.ADC_ContinuousConvMode = ENABLE;
+//  ADC_InitStructure.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_None;
+//  ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T1_CC1;
+//  ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;
+//  ADC_InitStructure.ADC_NbrOfConversion = 1;
+//  ADC_Init(ADC3, &ADC_InitStructure);
+
+//  /* ADC3 regular channel7 configuration *************************************/
+//  ADC_RegularChannelConfig(ADC3, ADC_Channel_10, 1, ADC_SampleTime_3Cycles);
+
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC3, ENABLE);
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOC, ENABLE);
 
 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AIN;
 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_0;
 	GPIO_InitStruct.GPIO_PuPd = GPIO_PuPd_NOPULL;
 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOB, &GPIO_InitStruct);
+	GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 	ADC_DeInit();
 	ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;	//data converted will be shifted to right
@@ -384,28 +532,22 @@ void MainTask(void * pvParameters)
 	ADC_InitStruct.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_Falling; //no trigger for conversion
 	ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T2_CC2;
 	ADC_InitStruct.ADC_ScanConvMode = DISABLE; //The scan is configured in one channel
-	ADC_Init(ADC1, &ADC_InitStruct); //Initialize ADC with the previous configuration
+	ADC_Init(ADC3, &ADC_InitStruct); //Initialize ADC with the previous configuration
 	//Enable ADC conversion
-	ADC_Cmd(ADC1, ENABLE);
+	ADC_Cmd(ADC3, ENABLE);
 	//Select the channel to be read from
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_3Cycles);
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_10, 1, ADC_SampleTime_3Cycles);
+
+ /* Enable DMA request after last transfer (Single-ADC mode) */
+  ADC_DMARequestAfterLastTransferCmd(ADC3, ENABLE);
+
+  /* Enable ADC3 DMA */
+  ADC_DMACmd(ADC3, ENABLE);
+
+  /* Enable ADC3 */
+  ADC_Cmd(ADC3, ENABLE);
 	
-
-
-
 	
-
-
-
-	NVIC_InitStructure.NVIC_IRQChannel = ADC_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_Init(&NVIC_InitStructure);
-
-	
-	ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
-	ADC_SoftwareStartConv(ADC1);
 	while (1)
 	{
 		if( Ssend == 1  )

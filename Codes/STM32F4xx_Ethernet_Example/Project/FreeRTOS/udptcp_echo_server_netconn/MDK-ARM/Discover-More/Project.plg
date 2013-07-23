@@ -399,3 +399,191 @@ Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet
 Erase Done.
 Programming Done.
 Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(464): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=50830 RO-data=5326 RW-data=460 ZI-data=53540  
+".\Discover-More\Project.axf" - 0 Errors, 1 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(464): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=50790 RO-data=5326 RW-data=456 ZI-data=53544  
+".\Discover-More\Project.axf" - 0 Errors, 1 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(464): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=50786 RO-data=5326 RW-data=456 ZI-data=53544  
+".\Discover-More\Project.axf" - 0 Errors, 1 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(132): warning:  #223-D: function "RCC_AHBPeriphClockCmd" declared implicitly
+..\src\main.c(132): error:  #20: identifier "RCC_AHBPeriph_GPIOA" is undefined
+..\src\main.c(134): error:  #20: identifier "GPIO_AF" is undefined
+..\src\main.c(135): error:  #20: identifier "GPIO_AF_1" is undefined
+..\src\main.c(138): error:  #268: declaration may not appear after executable statement in block
+..\src\main.c(146): error:  #268: declaration may not appear after executable statement in block
+..\src\main.c(494): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+".\Discover-More\Project.axf" - 5 Errors, 2 Warning(s).
+Target not created
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(137): error:  #268: declaration may not appear after executable statement in block
+..\src\main.c(145): error:  #268: declaration may not appear after executable statement in block
+..\src\main.c(158): error:  #147: declaration is incompatible with "int putc(int, FILE *)" (declared at line 661 of "C:\Keil\ARM\ARMCC\bin\..\include\stdio.h")
+..\src\main.c(507): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+".\Discover-More\Project.axf" - 3 Errors, 1 Warning(s).
+Target not created
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(158): error:  #147: declaration is incompatible with "int putc(int, FILE *)" (declared at line 661 of "C:\Keil\ARM\ARMCC\bin\..\include\stdio.h")
+..\src\main.c(507): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+".\Discover-More\Project.axf" - 1 Errors, 1 Warning(s).
+Target not created
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(507): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=50962 RO-data=5326 RW-data=456 ZI-data=53560  
+".\Discover-More\Project.axf" - 0 Errors, 1 Warning(s).
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(508): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=50978 RO-data=5326 RW-data=456 ZI-data=53560  
+".\Discover-More\Project.axf" - 0 Errors, 1 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(422): warning:  #111-D: statement is unreachable
+..\src\main.c(511): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=50658 RO-data=5326 RW-data=452 ZI-data=53556  
+".\Discover-More\Project.axf" - 0 Errors, 2 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(429): warning:  #111-D: statement is unreachable
+..\src\main.c(518): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=50670 RO-data=5326 RW-data=460 ZI-data=53556  
+".\Discover-More\Project.axf" - 0 Errors, 2 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(152): error:  #20: identifier "COM_TX_PORT" is undefined
+..\src\main.c(152): error:  #20: identifier "COM" is undefined
+..\src\main.c(152): error:  #20: identifier "COM_TX_PIN_SOURCE" is undefined
+..\src\main.c(152): error:  #20: identifier "COM_TX_AF" is undefined
+..\src\main.c(155): error:  #20: identifier "COM_RX_PORT" is undefined
+..\src\main.c(155): error:  #20: identifier "COM_RX_PIN_SOURCE" is undefined
+..\src\main.c(155): error:  #20: identifier "COM_RX_AF" is undefined
+..\src\main.c(162): error:  #20: identifier "COM_TX_PIN" is undefined
+..\src\main.c(168): error:  #20: identifier "COM_RX_PIN" is undefined
+..\src\main.c(172): error:  #20: identifier "COM_USART" is undefined
+..\src\main.c(172): error:  #20: identifier "USART_InitStruct" is undefined
+..\src\main.c(442): warning:  #111-D: statement is unreachable
+..\src\main.c(531): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+".\Discover-More\Project.axf" - 11 Errors, 2 Warning(s).
+Target not created
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(172): error:  #20: identifier "USART_InitStruct" is undefined
+..\src\main.c(175): error:  #20: identifier "COM_USART" is undefined
+..\src\main.c(175): error:  #20: identifier "COM" is undefined
+..\src\main.c(442): warning:  #111-D: statement is unreachable
+..\src\main.c(531): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+".\Discover-More\Project.axf" - 3 Errors, 2 Warning(s).
+Target not created
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(442): warning:  #111-D: statement is unreachable
+..\src\main.c(531): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=50658 RO-data=5326 RW-data=452 ZI-data=53556  
+".\Discover-More\Project.axf" - 0 Errors, 2 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(458): warning:  #111-D: statement is unreachable
+..\src\main.c(547): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=50702 RO-data=5326 RW-data=452 ZI-data=53540  
+".\Discover-More\Project.axf" - 0 Errors, 2 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(459): warning:  #111-D: statement is unreachable
+..\src\main.c(548): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=50726 RO-data=5326 RW-data=452 ZI-data=53540  
+".\Discover-More\Project.axf" - 0 Errors, 2 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(544): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=51038 RO-data=5326 RW-data=456 ZI-data=53544  
+".\Discover-More\Project.axf" - 0 Errors, 1 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(546): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=51046 RO-data=5326 RW-data=456 ZI-data=53544  
+".\Discover-More\Project.axf" - 0 Errors, 1 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(533): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=50998 RO-data=5326 RW-data=448 ZI-data=53544  
+".\Discover-More\Project.axf" - 0 Errors, 1 Warning(s).
+Build target 'Discover-More'
+compiling main.c...
+..\src\main.c(555): warning:  #167-D: argument of type "volatile u16_t *" is incompatible with parameter of type "void *"
+linking...
+Program Size: Code=51054 RO-data=5326 RW-data=456 ZI-data=53544  
+".\Discover-More\Project.axf" - 0 Errors, 1 Warning(s).
+Load "C:\\Users\\User\\Desktop\\uVisionWorkspace\\udp\\Codes\\STM32F4xx_Ethernet_Example\\Project\\FreeRTOS\\udptcp_echo_server_netconn\\MDK-ARM\\Discover-More\\Project.axf" 
+Erase Done.
+Programming Done.
+Verify OK.
