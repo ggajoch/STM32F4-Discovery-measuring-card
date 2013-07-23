@@ -142,16 +142,22 @@ int UDPsetup_network()
 			return 1;
 		}
 	}
+	
 	//UDPbuffer = netbuf_new();
 	return 0;
 }
 
 void UDPsend_packet(void * data, u16_t len)
 {
-	netconn_connect(Connection, &Address, Port);
+	if( netconn_connect(Connection, &Address, Port) != ERR_OK )
+	{
+		while(1)
+		{
+		}
+	}
 	netbuf_ref(UDPbuffer, data, len);
 	netconn_send(Connection, UDPbuffer);
-//	nettcon_disconnect(Connection);
+	netconn_disconnect(Connection);
 }
 void UDPreceive_packet(void * destination, u16_t len)
 {
@@ -234,11 +240,28 @@ void BasicDAC_Init()
   DAC_DMACmd(DAC_Channel_1, ENABLE);
 }
 
-
+u16_t ADCIndex = 0;
+unsigned char Ssend = 0;
+void ADC_IRQHandler()
+{
+	if( ADC_GetITStatus(ADC1, ADC_IT_EOC) )
+	{
+		adcMeasurements[ADCIndex++] = ADC_GetConversionValue(ADC1);
+		if( ADCIndex == 270 )
+		{
+			Ssend = 1;
+			ADCIndex = 0;
+			
+		}
+		ADC_ClearITPendingBit(ADC1, ADC_IT_EOC);
+		GPIO_ToggleBits(GPIOA, GPIO_Pin_0);
+	}	
+}
 uint16_t CCR1_Val = 333;
 uint16_t CCR2_Val = 249;
 uint16_t CCR3_Val = 166;
 uint16_t CCR4_Val = 83;
+
 void TIM_Config(void)
 {
   GPIO_InitTypeDef GPIO_InitStructure;
@@ -256,6 +279,10 @@ void TIM_Config(void)
   GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP ;
   GPIO_Init(GPIOA, &GPIO_InitStructure); 
 	
+	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_0;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+  GPIO_Init(GPIOA, &GPIO_InitStructure); 
+	
   /* GPIOC Configuration: TIM2 CH1 (PC6) and TIM2 CH2 (PC7) */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_6 | GPIO_Pin_7 ;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
@@ -265,7 +292,7 @@ void TIM_Config(void)
   GPIO_Init(GPIOC, &GPIO_InitStructure); 
   
   /* GPIOB Configuration:  TIM2 CH3 (PB0) and TIM2 CH4 (PB1) */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1;
+  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1 | GPIO_Pin_3;
   GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
   GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
   GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
@@ -274,7 +301,7 @@ void TIM_Config(void)
 
   /* Connect TIM2 pins to AF2 */  
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource15, GPIO_AF_TIM2);
-  GPIO_PinAFConfig(GPIOC, GPIO_PinSource7, GPIO_AF_TIM2); 
+  GPIO_PinAFConfig(GPIOB, GPIO_PinSource3, GPIO_AF_TIM2); 
   GPIO_PinAFConfig(GPIOB, GPIO_PinSource0, GPIO_AF_TIM2);
   GPIO_PinAFConfig(GPIOB, GPIO_PinSource1, GPIO_AF_TIM2); 
 	
@@ -290,7 +317,7 @@ void TIM_Config(void)
   /* PWM1 Mode configuration: Channel1 */
   TIM_OCInitStructure.TIM_OCMode = TIM_OCMode_PWM1;
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-  TIM_OCInitStructure.TIM_Pulse = 100; //CCR1_Val;
+  TIM_OCInitStructure.TIM_Pulse = 249;																// trigger for DAC
   TIM_OCInitStructure.TIM_OCPolarity = TIM_OCPolarity_High;
 
   TIM_OC1Init(TIM2, &TIM_OCInitStructure);
@@ -299,7 +326,7 @@ void TIM_Config(void)
 
   /* PWM1 Mode configuration: Channel2 */
   TIM_OCInitStructure.TIM_OutputState = TIM_OutputState_Enable;
-  TIM_OCInitStructure.TIM_Pulse = CCR2_Val;
+  TIM_OCInitStructure.TIM_Pulse = 333;																// trigger for ADC
 
   TIM_OC2Init(TIM2, &TIM_OCInitStructure);
 
@@ -326,22 +353,16 @@ void TIM_Config(void)
   /* TIM2 enable counter */
   TIM_Cmd(TIM2, ENABLE);
 	
-	TIM_SelectOutputTrigger(TIM2, TIM_TRGOSource_OC1); // <--------------------- here the trigger source
+	TIM_SelectOutputTrigger(TIM2, TIM_TRGOSource_OC1); // <--------------------- here the trigger source for DAC1
 }
 
+
+volatile u8_t i;
 void MainTask(void * pvParameters)
 {
-	err_t err;
 	
-
-
-	int i = 0;
-	u16_t prev = 0;
-	Point dane[330];
-
-	//LWIP_UNUSED_ARG(arg);
-
-  UDPsetup_network();
+	UDPsetup_network();
+	
 	
 	TIM_Config();
 	BasicDAC_Init();
@@ -359,7 +380,7 @@ void MainTask(void * pvParameters)
 	ADC_DeInit();
 	ADC_InitStruct.ADC_DataAlign = ADC_DataAlign_Right;	//data converted will be shifted to right
 	ADC_InitStruct.ADC_Resolution = ADC_Resolution_12b;	//Input voltage is converted into a 12bit number giving a maximum value of 4096
-	ADC_InitStruct.ADC_ContinuousConvMode = ENABLE; //the conversion is continuous, the input data is converted more than once
+	ADC_InitStruct.ADC_ContinuousConvMode = DISABLE; //the conversion is continuous, the input data is converted more than once
 	ADC_InitStruct.ADC_ExternalTrigConvEdge = ADC_ExternalTrigConvEdge_Falling; //no trigger for conversion
 	ADC_InitStruct.ADC_ExternalTrigConv = ADC_ExternalTrigConv_T2_CC2;
 	ADC_InitStruct.ADC_ScanConvMode = DISABLE; //The scan is configured in one channel
@@ -368,10 +389,11 @@ void MainTask(void * pvParameters)
 	ADC_Cmd(ADC1, ENABLE);
 	//Select the channel to be read from
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 1, ADC_SampleTime_3Cycles);
-	ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
+	
 
 
 
+	
 
 
 
@@ -382,26 +404,25 @@ void MainTask(void * pvParameters)
 	NVIC_Init(&NVIC_InitStructure);
 
 	
+	ADC_ITConfig(ADC1, ADC_IT_EOC, ENABLE);
+	ADC_SoftwareStartConv(ADC1);
 	while (1)
 	{
-
-			for (i = 0; i < 270; ++i)
-			{
-				while (!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC));
-				adcMeasurements[i] = ADC_GetConversionValue(ADC1);
-			}
-		
+		if( Ssend == 1  )
+		{
 			UDPsend_packet(adcMeasurements,540);
-
-		
+			Ssend = 0;
+		}
 	}
 }
 
-/**
- * @brief  Main program.
- * @param  None
- * @retval None
- */
+
+
+
+
+
+
+
 int main(void)
 {
 	/*!< At this stage the microcontroller clock setting is already configured to
@@ -481,26 +502,3 @@ void LCD_LED_Init(void)
 	LCD_DisplayStringLine(Line3, (uint8_t*) MESSAGE4);
 #endif
 }
-
-#ifdef  USE_FULL_ASSERT
-
-/**
- * @brief  Reports the name of the source file and the source line number
- *   where the assert_param error has occurred.
- * @param  file: pointer to the source file name
- * @param  line: assert_param error line source number
- * @retval None
- */
-void assert_failed(uint8_t* file, uint32_t line)
-{
-	/* User can add his own implementation to report the file name and line number,
-	 ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-
-	/* Infinite loop */
-	while (1)
-	{}
-}
-#endif
-
-/*********** Portions COPYRIGHT 2012 Embest Tech. Co., Ltd.*****END OF FILE****/
-
