@@ -90,10 +90,6 @@ extern volatile int TTime;
 /* MII and RMII mode selection, for STM324xG-EVAL Board(MB786) RevB ***********/
 #define RMII_MODE 
 
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */  
-void Time_Update(void);
-void Delay(uint32_t nCount);
 
 
 #ifdef __cplusplus

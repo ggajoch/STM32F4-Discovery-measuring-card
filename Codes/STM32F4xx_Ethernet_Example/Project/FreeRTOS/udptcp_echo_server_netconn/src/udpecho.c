@@ -42,64 +42,58 @@
 
 #define UDPECHO_THREAD_PRIO  ( tskIDLE_PRIORITY + 3 )
 
-static struct netconn *conn;
-static struct netbuf *buf;
-static struct netbuf *mine;
-static struct ip_addr *addr;
-static unsigned short port;
-/*-----------------------------------------------------------------------------------*/
-static void udpecho_thread(void *arg)
-{
-  err_t err;
-  
-  LWIP_UNUSED_ARG(arg);
 
-  conn = netconn_new(NETCONN_UDP);
-  if (conn!= NULL) {
-    err = netconn_bind(conn, IP_ADDR_ANY, 7);
-    if (err == ERR_OK) {
-			char tekst[50];
-			int i = 0;
-			mine = netbuf_new();
-      while (1) {
-        buf = netconn_recv(conn);
-				++i;
-				
-				LCD_ClearLine(Line4);
-				sprintf(tekst, "pakiet: %Lf", (long double)i/(long double)TTime);
-				LCD_DisplayStringLine(Line4, (char *)tekst);
-				
-				if( netbuf_ref(mine, "dupa", 3) == ERR_MEM )
-				{
-						LCD_DisplayStringLine(Line5, "AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-				}
-				
-				
-        if (buf!= NULL) {
-          addr = netbuf_fromaddr(buf);
-          port = netbuf_fromport(buf);
-          netconn_connect(conn, addr, port);
-          buf->addr = NULL;
-					mine->addr = NULL;
-          if( netconn_send(conn,mine) != ERR_OK )
-					{
-						LCD_DisplayStringLine(Line6, "BBBBBBBBBBBBBBBBBBBBBBBBBBB");
-					}
-          netbuf_delete(buf);
-					netbuf_delete(mine);
-        }
-      }
-    } else {
-      printf("can not bind netconn");
-    }
-  } else {
-    printf("can create new UDP netconn");
-  }
-}
-/*-----------------------------------------------------------------------------------*/
-void udpecho_init(void)
+static struct ip_addr Address;
+static struct netbuf *UDPbuffer;
+static struct netconn *Connection;
+static unsigned short Port;
+
+int UDPsetup_network()
 {
-  //sys_thread_new("udpecho_thread", udpecho_thread, NULL, DEFAULT_THREAD_STACKSIZE,UDPECHO_THREAD_PRIO );
+	err_t err;
+
+	Connection = netconn_new(NETCONN_UDP);
+	if (Connection != NULL)
+	{
+		err = netconn_bind(Connection, IP_ADDR_ANY, 7);
+		if (err == ERR_OK)
+		{
+			UDPbuffer = netbuf_new();
+			IP4_ADDR(&Address, 192, 168, 0, 1);
+			Port = 7;
+			return 1;
+		}
+	}
+	
+	//UDPbuffer = netbuf_new();
+	return 0;
 }
+
+void UDPsend_packet(void * data, u16_t len)
+{
+	if( netconn_connect(Connection, &Address, Port) != ERR_OK )
+	{
+		while(1)
+		{
+		}
+	}
+	netbuf_ref(UDPbuffer, data, len);
+	netconn_send(Connection, UDPbuffer);
+	netconn_disconnect(Connection);
+}
+void UDPreceive_packet(void * destination, u16_t len)
+{
+	UDPbuffer = netconn_recv(Connection);
+	netbuf_copy(UDPbuffer, destination, len);
+	netbuf_delete(UDPbuffer);
+}
+
+
+
+
+ 
+
+
+
 
 #endif /* LWIP_NETCONN */
