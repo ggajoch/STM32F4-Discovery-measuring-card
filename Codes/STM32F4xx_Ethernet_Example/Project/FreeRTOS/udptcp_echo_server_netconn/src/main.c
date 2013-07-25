@@ -135,86 +135,23 @@ void DMA2_Stream0_IRQHandler()
 
 
 
-volatile u16_t i;
+volatile u32_t i = 0;
 volatile u16 data[300], data2[300];
-volatile u32 iii;
-
+volatile char tekst[300];
 void MainTask(void * pvParameters)
 {
 	
-//	UART_Setup();
-//	//UDPsetup_network();
-//	
-//	DEBUG("a\n\r");
-//	
-//	for(i=0;i<270;i++) 
-//	{
-//		data[i] = i;
-//		data2[i] = 0;
-//	}		
-//	
-//  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2 | RCC_AHB1Periph_GPIOA  , ENABLE);
-//  
-//  /* 2. Enable and configure Peripheral DMA_Stream (not required by SRAM).*/
-//  
-//  /* 3. For a given Stream, program the required configuration 
-//  through following parameters: Source and Destination addresses, 
-//  Transfer Direction, Transfer size, Source and Destination data formats, 
-//  Circular or Normal mode, Stream Priority level, Source and Destination 
-//  Incrementation mode, FIFO mode and its Threshold (if needed), 
-//  Burst mode for Source and/or  Destination (if needed) using the DMA_Init().*/
-
-//  DMA_DeInit(DMA2_Stream0);
-//  while(DMA_GetCmdStatus(DMA2_Stream0) != DISABLE);
-
-//   DMA_InitStructure.DMA_Channel = DMA_Channel_0;
-//  DMA_InitStructure.DMA_PeripheralBaseAddr = (u32)(&data);
-//  DMA_InitStructure.DMA_Memory0BaseAddr = (u32)(&data);
-//  DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToMemory;
-//  DMA_InitStructure.DMA_BufferSize = (uint32_t) (270);
-//  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
-//  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Disable;
-//  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
-//  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
-//  DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
-//  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
-//  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
-//  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
-//  //DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_INC8;
-//  //DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_INC8;
-//  DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
-//  DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
-
-
-//  DMA_Init(DMA2_Stream0, &DMA_InitStructure);
-
-//  /* 4. Enable the NVIC and the corresponding interrupt(s)
-//   using the function DMA_ITConfig() if you need to use DMA interrupts.*/
-//  DMA_ITConfig(DMA2_Stream0, DMA_IT_TC, ENABLE);
-
-//  /* 5. Optionally, if the Circular mode is enabled, you can use the 
-//  Double buffer by configuring the second Memory address and the 
-//  first Memory to be used through the function DMA_DoubleBufferModeConfig(). 
-//  Then enable the Double buffer mode through the function
-//  DMA_DoubleBufferModeCmd(). These operations must be done before step 6.*/
-
-//  /* 6. Enable the DMA stream using the DMA_Cmd() function. */
-//  DMA_Cmd(DMA2_Stream0, ENABLE);
-		
-	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
-	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
-	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
-	GPIO_Init(GPIOA, &GPIO_InitStructure);
-	iii = 0;
+	UART_Setup();
+	UDPsetup_network();
+	
+	DEBUG("a\n\r");
+	
 	while (1)
 	{
-		GPIO_SetBits(GPIOA, GPIO_Pin_0);
-		GPIO_ResetBits(GPIOA, GPIO_Pin_0);
-		++iii;
+		sprintf(tekst,"%d",i++);
+		UDPsend_packet(tekst,strlen((const char*)tekst));
 	}
+	
 }
 
 

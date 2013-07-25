@@ -61,25 +61,26 @@ int UDPsetup_network()
 			UDPbuffer = netbuf_new();
 			IP4_ADDR(&Address, 192, 168, 0, 1);
 			Port = 7;
-			return 1;
+			
 		}
+		else return 0;
+	}
+	else return 0;
+	if( netconn_connect(Connection, &Address, Port) != ERR_OK )
+	{
+		return 0;
 	}
 	
 	//UDPbuffer = netbuf_new();
-	return 0;
+	return 1;
 }
 
 void UDPsend_packet(void * data, u16_t len)
 {
-	if( netconn_connect(Connection, &Address, Port) != ERR_OK )
-	{
-		while(1)
-		{
-		}
-	}
+	
 	netbuf_ref(UDPbuffer, data, len);
 	netconn_send(Connection, UDPbuffer);
-	netconn_disconnect(Connection);
+	//netconn_disconnect(Connection);
 }
 void UDPreceive_packet(void * destination, u16_t len)
 {
