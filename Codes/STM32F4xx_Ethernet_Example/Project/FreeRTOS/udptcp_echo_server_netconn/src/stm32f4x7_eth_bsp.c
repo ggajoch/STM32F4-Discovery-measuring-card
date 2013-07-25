@@ -64,6 +64,7 @@ static void ETH_NVIC_Config(void);
   */
 void ETH_BSP_Config(void)
 {
+	
   /* Configure the GPIO ports for ethernet pins */
   ETH_GPIO_Config();
   
@@ -188,7 +189,7 @@ void ETH_GPIO_Config(void)
         ETH_RMII_TXD0   -------> PB12
         ETH_RMII_TXD1   -------> PB13
 
-        ETH_RST_PIN     -------> PE2
+        ETH_RST_PIN     -------> PE2 // ERROR - NO PIN!
    */
 
   /* Configure PA1,PA2 and PA7 */
@@ -201,6 +202,8 @@ void ETH_GPIO_Config(void)
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource1, GPIO_AF_ETH);
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource2, GPIO_AF_ETH);
   GPIO_PinAFConfig(GPIOA, GPIO_PinSource7, GPIO_AF_ETH);
+
+	
 
   /* Configure PB10,PB11,PB12 and PB13 */
   GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11 | GPIO_Pin_12 | GPIO_Pin_13;
@@ -217,18 +220,36 @@ void ETH_GPIO_Config(void)
   GPIO_PinAFConfig(GPIOC, GPIO_PinSource4, GPIO_AF_ETH);
   GPIO_PinAFConfig(GPIOC, GPIO_PinSource5, GPIO_AF_ETH);
 
-  /* Configure the PHY RST  pin */
-  GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
-  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
-  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-  GPIO_Init(GPIOE, &GPIO_InitStructure);
 
-  GPIO_ResetBits(GPIOE, GPIO_Pin_2);	
-  for (i = 0; i < 20000; i++);
-  GPIO_SetBits(GPIOE, GPIO_Pin_2);
-  for (i = 0; i < 20000; i++);
+
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_8;
+  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL ;
+	
+  GPIO_Init(GPIOA, &GPIO_InitStructure);
+
+  /* Output HSE clock (25MHz) on MCO pin (PA8) to clock the PHY */
+  RCC_MCO1Config(RCC_MCO1Source_PLLCLK, RCC_MCO1Div_2);
+	
+	
+//  /* Configure the PHY RST  pin */
+//  //GPIO_InitStructure.GPIO_Pin = GPIO_Pin_2;
+//	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_14;
+//  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+//  GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+//  GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_UP;
+//  GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+//  //GPIO_Init(GPIOE, &GPIO_InitStructure);
+//	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+//  //GPIO_ResetBits(GPIOE, GPIO_Pin_2);	
+//	GPIO_ResetBits(GPIOB, GPIO_Pin_14);	
+//  for (i = 0; i < 20000; i++);
+//  //GPIO_SetBits(GPIOE, GPIO_Pin_2);
+//	GPIO_SetBits(GPIOB, GPIO_Pin_14);
+//  for (i = 0; i < 20000; i++);
 }
 
 /**

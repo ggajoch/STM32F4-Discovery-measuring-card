@@ -12,20 +12,6 @@
 #define LED_TASK_PRIO    ( tskIDLE_PRIORITY + 1 )
 
 
-void LCD_LED_Init(void);
-
-void ToggleLed4(void * pvParameters)
-{
-	while (1)
-	{
-		for (;;)
-		{
-			STM_EVAL_LEDToggle(LED4);
-			vTaskDelay(100);
-		}
-	}
-}
-
 
 ADC_InitTypeDef ADC_InitStruct;
 GPIO_InitTypeDef GPIO_InitStruct;
@@ -43,11 +29,7 @@ DAC_InitTypeDef  DAC_InitStructure;
 TIM_OCInitTypeDef  TIM_OCInitStructure;
 USART_InitTypeDef USART_InitStructure;
 
-const uint16_t Sine12bit[32] = {
-                      2047, 2447, 2831, 3185, 3498, 3750, 3939, 4056, 4095, 4056,
-                      3939, 3750, 3495, 3185, 2831, 2447, 2047, 1647, 1263, 909, 
-                      599, 344, 155, 38, 0, 38, 155, 344, 599, 909, 1263, 1647};
-const uint8_t Escalator8bit[6] = {0x0, 0x33, 0x66, 0x99, 0xCC, 0xFF};
+
 
 
 void UART_Setup()
@@ -129,17 +111,109 @@ void USARTPrintString(char * x)
 }
 #define DEBUG(x) USARTPrintString(x)
 
-char tekst[50];
-	
 
-volatile u8_t i;
-void MainTask(void * pvParameters)
+
+void ToggleLed4(void * pvParameters)
 {
-	UART_Setup();
-	UDPsetup_network();
-	
 	while (1)
 	{
+		for (;;)
+		{
+			STM_EVAL_LEDToggle(LED4);
+			vTaskDelay(100);
+		}
+	}
+}
+
+
+
+void DMA2_Stream0_IRQHandler()
+{
+	DEBUG("in");
+}
+
+
+
+
+volatile u16_t i;
+volatile u16 data[300], data2[300];
+volatile u32 iii;
+
+void MainTask(void * pvParameters)
+{
+	
+//	UART_Setup();
+//	//UDPsetup_network();
+//	
+//	DEBUG("a\n\r");
+//	
+//	for(i=0;i<270;i++) 
+//	{
+//		data[i] = i;
+//		data2[i] = 0;
+//	}		
+//	
+//  RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_DMA2 | RCC_AHB1Periph_GPIOA  , ENABLE);
+//  
+//  /* 2. Enable and configure Peripheral DMA_Stream (not required by SRAM).*/
+//  
+//  /* 3. For a given Stream, program the required configuration 
+//  through following parameters: Source and Destination addresses, 
+//  Transfer Direction, Transfer size, Source and Destination data formats, 
+//  Circular or Normal mode, Stream Priority level, Source and Destination 
+//  Incrementation mode, FIFO mode and its Threshold (if needed), 
+//  Burst mode for Source and/or  Destination (if needed) using the DMA_Init().*/
+
+//  DMA_DeInit(DMA2_Stream0);
+//  while(DMA_GetCmdStatus(DMA2_Stream0) != DISABLE);
+
+//   DMA_InitStructure.DMA_Channel = DMA_Channel_0;
+//  DMA_InitStructure.DMA_PeripheralBaseAddr = (u32)(&data);
+//  DMA_InitStructure.DMA_Memory0BaseAddr = (u32)(&data);
+//  DMA_InitStructure.DMA_DIR = DMA_DIR_MemoryToMemory;
+//  DMA_InitStructure.DMA_BufferSize = (uint32_t) (270);
+//  DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+//  DMA_InitStructure.DMA_MemoryInc = DMA_MemoryInc_Disable;
+//  DMA_InitStructure.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+//  DMA_InitStructure.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+//  DMA_InitStructure.DMA_Mode = DMA_Mode_Normal;
+//  DMA_InitStructure.DMA_Priority = DMA_Priority_High;
+//  DMA_InitStructure.DMA_FIFOMode = DMA_FIFOMode_Disable;
+//  DMA_InitStructure.DMA_FIFOThreshold = DMA_FIFOThreshold_Full;
+//  //DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_INC8;
+//  //DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_INC8;
+//  DMA_InitStructure.DMA_MemoryBurst = DMA_MemoryBurst_Single;
+//  DMA_InitStructure.DMA_PeripheralBurst = DMA_PeripheralBurst_Single;
+
+
+//  DMA_Init(DMA2_Stream0, &DMA_InitStructure);
+
+//  /* 4. Enable the NVIC and the corresponding interrupt(s)
+//   using the function DMA_ITConfig() if you need to use DMA interrupts.*/
+//  DMA_ITConfig(DMA2_Stream0, DMA_IT_TC, ENABLE);
+
+//  /* 5. Optionally, if the Circular mode is enabled, you can use the 
+//  Double buffer by configuring the second Memory address and the 
+//  first Memory to be used through the function DMA_DoubleBufferModeConfig(). 
+//  Then enable the Double buffer mode through the function
+//  DMA_DoubleBufferModeCmd(). These operations must be done before step 6.*/
+
+//  /* 6. Enable the DMA stream using the DMA_Cmd() function. */
+//  DMA_Cmd(DMA2_Stream0, ENABLE);
+		
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE);
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP;
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	iii = 0;
+	while (1)
+	{
+		GPIO_SetBits(GPIOA, GPIO_Pin_0);
+		GPIO_ResetBits(GPIOA, GPIO_Pin_0);
+		++iii;
 	}
 }
 
@@ -184,3 +258,4 @@ int main(void)
 	for (;;)
 		;
 }
+
