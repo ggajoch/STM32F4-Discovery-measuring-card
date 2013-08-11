@@ -85,7 +85,7 @@ extern volatile int TTime;
 #define GW_ADDR0   192
 #define GW_ADDR1   168
 #define GW_ADDR2   1
-#define GW_ADDR3   1 
+#define GW_ADDR3   100
 
 /* MII and RMII mode selection, for STM324xG-EVAL Board(MB786) RevB ***********/
 #define RMII_MODE 

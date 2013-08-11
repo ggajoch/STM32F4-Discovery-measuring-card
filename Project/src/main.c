@@ -127,13 +127,14 @@ void ToggleLed4(void * pvParameters)
 
 xSemaphoreHandle xSemaphore = NULL, blockReadingTask = NULL, dataToRead = NULL, networkOK = NULL;
 xQueueHandle sendQueue = NULL, receiveQueue = NULL;
+static struct netconn *UDPConnection;
 
 typedef struct 
 {
 	u16_t length; //2 bytes
 	char data[560];
 } OnePacket;
-
+#define OnePacketMAXSIZE 570
 
 void MainTask(void * pvParameters)
 {
@@ -142,7 +143,7 @@ void MainTask(void * pvParameters)
 	char nap[] = "aaa";
 	
 	UART_Setup();
-	UDPsetup_network();
+	UDPConnection = UDPsetup_network();
 
 	
 	x.length = 3;
@@ -153,7 +154,11 @@ void MainTask(void * pvParameters)
 	xSemaphoreGive( networkOK );
 	while (1)
 	{
-//		xQueueSend(sendQueue,  &(wsk_x), ( portTickType ) 0 );
+		OnePacket * wsk_packet;
+		if( xQueueReceive(receiveQueue, &wsk_packet, portMAX_DELAY) == pdTRUE)
+		{
+			xQueueSend(sendQueue, &wsk_packet, 0);
+		}
 	}
 }
 
@@ -187,8 +192,8 @@ u8_t rcvBuffer[600];
 static int rcvSize = 0;
 void ReadingTask(void * pvParameters)
 {
-	OnePacket packet;
-	OnePacket * pointer_to_packet = &packet;
+	OnePacket * pointer_to_packet;
+	static struct netbuf *UDPbuffer;
 	
 	while( xSemaphore == NULL );
 	while( networkOK == NULL );
@@ -199,19 +204,15 @@ void ReadingTask(void * pvParameters)
 	{
 		if ( xSemaphoreTake(dataToRead, portMAX_DELAY) == pdTRUE )
 		{
-			rcvSize = UDPreceive_packet(rcvBuffer);
+			//pointer_to_packet = malloc(OnePacketMAXSIZE
+			//rcvSize = UDPreceive_packet(rcvBuffer);
+			UDPbuffer = netconn_recv(UDPConnection);
+			pointer_to_packet = malloc(2+UDPbuffer->p->tot_len);
+			pointer_to_packet->length = UDPbuffer->p->tot_len;
+			netbuf_copy(UDPbuffer, pointer_to_packet->data, UDPbuffer->p->tot_len);
+			netbuf_delete(UDPbuffer);
 			
-			if( xSemaphoreTake( xSemaphore, portMAX_DELAY ) == pdTRUE )
-			{
-				pointer_to_packet = malloc(4);
-				pointer_to_packet->data[0] = (rcvSize >> 8);
-				pointer_to_packet->data[1] = (rcvSize & 0xFF);
-				pointer_to_packet->length = 2;
-				
-				xQueueSend(sendQueue, &pointer_to_packet, 0);
-				//UDPsend_packet(rcvBuffer, 20);
-				xSemaphoreGive( xSemaphore );
-			}
+			xQueueSend(receiveQueue, &pointer_to_packet, 0);
 		}
 	}
 }

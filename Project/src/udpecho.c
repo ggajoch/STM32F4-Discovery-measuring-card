@@ -55,7 +55,7 @@ void giveSem(struct netconn * a, enum netconn_evt b, u16_t len)
 	xSemaphoreGive(dataToRead);
 }
 
-int UDPsetup_network()
+struct netconn * UDPsetup_network()
 {
 	err_t err;
 
@@ -68,7 +68,7 @@ int UDPsetup_network()
 			UDPbuffer = netbuf_new();
 			IP4_ADDR(&Address, 192, 168, 1, 100);
 			Port = 7;
-			return 1;
+			return Connection;
 		}
 	}
 	if( netconn_connect(Connection, &Address, Port) != ERR_OK )
@@ -78,7 +78,7 @@ int UDPsetup_network()
 		}
 	}
 	//UDPbuffer = netbuf_new();
-	return 0;
+	return Connection;
 }
 
 void UDPsend_packet(void * data, u16_t len)
