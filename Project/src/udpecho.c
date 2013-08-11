@@ -48,35 +48,42 @@ static struct netbuf *UDPbuffer;
 static struct netconn *Connection;
 static unsigned short Port;
 
+extern xSemaphoreHandle dataToRead;
+
+void giveSem(struct netconn * a, enum netconn_evt b, u16_t len)
+{
+	xSemaphoreGive(dataToRead);
+}
+
 int UDPsetup_network()
 {
 	err_t err;
 
-	Connection = netconn_new(NETCONN_UDP);
+	Connection = netconn_new_with_callback(NETCONN_UDP, giveSem);
 	if (Connection != NULL)
 	{
 		err = netconn_bind(Connection, IP_ADDR_ANY, 7);
 		if (err == ERR_OK)
 		{
 			UDPbuffer = netbuf_new();
-			IP4_ADDR(&Address, 192, 168, 0, 1);
+			IP4_ADDR(&Address, 192, 168, 1, 100);
 			Port = 7;
 			return 1;
 		}
 	}
-	
-	//UDPbuffer = netbuf_new();
-	return 0;
-}
-
-void UDPsend_packet(void * data, u16_t len)
-{
 	if( netconn_connect(Connection, &Address, Port) != ERR_OK )
 	{
 		while(1)
 		{
 		}
 	}
+	//UDPbuffer = netbuf_new();
+	return 0;
+}
+
+void UDPsend_packet(void * data, u16_t len)
+{
+	netconn_connect(Connection, &Address, Port);
 	netbuf_ref(UDPbuffer, data, len);
 	netconn_send(Connection, UDPbuffer);
 	netconn_disconnect(Connection);

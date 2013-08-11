@@ -125,28 +125,49 @@ void ToggleLed4(void * pvParameters)
 	}
 }
 
-
-
-
-
+xSemaphoreHandle xSemaphore = NULL, blockReadingTask = NULL, dataToRead = NULL;
 
 void MainTask(void * pvParameters)
 {
 	
 	UART_Setup();
 	UDPsetup_network();
-		
+	
+	xSemaphoreGive( blockReadingTask );
 	
 	while (1)
 	{
-		UDPsend_packet("aaa",3);
+		if( xSemaphoreTake( xSemaphore, portMAX_DELAY ) == pdTRUE )
+		{
+			UDPsend_packet("aaa",3);
+			xSemaphoreGive( xSemaphore );
+					
+			vTaskDelay(10);
+		}
 	}
 }
 
 
 
-
-
+u8_t rcvBuffer[600];
+void ReadingTask(void * pvParameters)
+{
+	while( xSemaphore == NULL );
+	while(1)
+	{
+		if ( xSemaphoreTake(dataToRead, portMAX_DELAY) == pdTRUE )
+		{
+			UDPreceive_packet(rcvBuffer, 20);
+			
+			if( xSemaphoreTake( xSemaphore, portMAX_DELAY ) == pdTRUE )
+			{
+				//vTaskDelay(10);
+				UDPsend_packet(rcvBuffer, 20);
+				xSemaphoreGive( xSemaphore );
+			}
+		}
+	}
+}
 
 
 
@@ -158,12 +179,23 @@ int main(void)
 	 To reconfigure the default setting of SystemInit() function, refer to
 	 system_stm32f4xx.c file
 	 */
+	
+	
+	xSemaphore = xSemaphoreCreateMutex();	
+	xSemaphoreGive( xSemaphore );
+	
+	blockReadingTask = xSemaphoreCreateMutex();	
+	xSemaphoreTake( blockReadingTask, portMAX_DELAY );
+	
+	dataToRead = xSemaphoreCreateMutex();	
+	xSemaphoreTake( dataToRead, portMAX_DELAY );
+	
 	LCD_LED_Init();
 	ETH_BSP_Config();
 	LwIP_Init();
 	sys_thread_new("Main", MainTask, NULL, DEFAULT_THREAD_STACKSIZE,
 			( tskIDLE_PRIORITY + 3));
-
+	
 #ifdef USE_DHCP
 	/* Start DHCPClient */
 	xTaskCreate(LwIP_DHCP_task, "DHCPClient", configMINIMAL_STACK_SIZE * 2, NULL,DHCP_TASK_PRIO, NULL);
@@ -172,8 +204,8 @@ int main(void)
 	
 	
 	/* Start toogleLed4 task : Toggle LED4  every 250ms */
-	xTaskCreate(ToggleLed4, (const signed char *)"LED4", configMINIMAL_STACK_SIZE, NULL,
-			LED_TASK_PRIO, NULL);
+	xTaskCreate(ToggleLed4, (const signed char *)"LED4", configMINIMAL_STACK_SIZE, NULL,( tskIDLE_PRIORITY + 3), NULL);
+	xTaskCreate(ReadingTask, (const signed char *)"ReadingTask", DEFAULT_THREAD_STACKSIZE, NULL,( tskIDLE_PRIORITY + 3), NULL);
 
 //xTaskCreate(MainTask, "Main", configMINIMAL_STACK_SIZE, NULL, LED_TASK_PRIO, NULL);
 

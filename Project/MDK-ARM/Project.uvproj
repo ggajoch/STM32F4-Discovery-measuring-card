@@ -152,7 +152,7 @@
             <CpuDllArguments></CpuDllArguments>
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
-            <InitializationFile></InitializationFile>
+            <InitializationFile>.\Dbg_RAM.ini</InitializationFile>
             <Driver>STLink\ST-LINKIII-KEIL_SWO.dll</Driver>
           </TargetDlls>
         </DebugOption>
@@ -163,9 +163,8 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4103</DriverSelection>
+            <DriverSelection>4104</DriverSelection>
           </Flash1>
-          <bUseTDR>0</bUseTDR>
           <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
           <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
@@ -208,7 +207,7 @@
             <hadIRAM>1</hadIRAM>
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
-            <RvdsVP>1</RvdsVP>
+            <RvdsVP>2</RvdsVP>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -297,8 +296,8 @@
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
-                <StartAddress>0x8000000</StartAddress>
-                <Size>0x100000</Size>
+                <StartAddress>0x20000000</StartAddress>
+                <Size>0x10000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -322,8 +321,8 @@
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
-                <StartAddress>0x20000000</StartAddress>
-                <Size>0x20000</Size>
+                <StartAddress>0x20010000</StartAddress>
+                <Size>0x10000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -349,7 +348,7 @@
             <uSurpInc>0</uSurpInc>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>STM32F4XX, USE_STDPERIPH_DRIVER</Define>
+              <Define>STM32F4XX, USE_STDPERIPH_DRIVER, VECT_TAB_SRAM</Define>
               <Undefine></Undefine>
               <IncludePath>..\;..\inc;..\src;..\..\Libraries\CMSIS\Include;..\..\Libraries\STM32F4x7_ETH_Driver\inc;..\..\Libraries\STM32F4xx_StdPeriph_Driver\inc;..\..\Utilities\STM32F4-Discovery;..\..\Utilities\lwip_v1.3.2\port\STM32F4x7;..\..\Utilities\lwip_v1.3.2\src\include;..\..\Utilities\lwip_v1.3.2\src\include\ipv4;..\..\Utilities\lwip_v1.3.2\src\include\lwip;..\..\Utilities\lwip_v1.3.2\src\include\netif;..\..\Utilities\lwip_v1.3.2\port\STM32F4x7\FreeRTOS;..\..\Utilities\FreeRTOS_v6.1.0\include;..\..\Utilities\FreeRTOS_v6.1.0\portable\MDK-ARM\ARM_CM3;..\src</IncludePath>
             </VariousControls>
@@ -377,9 +376,9 @@
             <noStLib>0</noStLib>
             <RepFail>1</RepFail>
             <useFile>0</useFile>
-            <TextAddressRange>0x08000000</TextAddressRange>
-            <DataAddressRange>0x20000000</DataAddressRange>
-            <ScatterFile></ScatterFile>
+            <TextAddressRange>0x20000000</TextAddressRange>
+            <DataAddressRange>0x2000F000</DataAddressRange>
+            <ScatterFile>.\Discover-More\Project.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc></Misc>
