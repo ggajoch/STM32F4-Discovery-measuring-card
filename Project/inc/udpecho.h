@@ -6,7 +6,7 @@
 
 int UDPsetup_network(void);
 void UDPsend_packet(void * data, u16_t len);
-void UDPreceive_packet(void * destination, u16_t len);
+u16_t UDPreceive_packet(void * destination);
 
 
 

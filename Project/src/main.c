@@ -126,23 +126,53 @@ void ToggleLed4(void * pvParameters)
 }
 
 xSemaphoreHandle xSemaphore = NULL, blockReadingTask = NULL, dataToRead = NULL;
+xQueueHandle sendQueue = NULL, receiveQueue = NULL;
+
+typedef struct 
+{
+	char data[560];
+	int length;
+} OnePacket;
+
 
 void MainTask(void * pvParameters)
 {
+	OnePacket x;
+	OnePacket * wsk_x = &x;
+	char nap[] = "aaa";
 	
 	UART_Setup();
 	UDPsetup_network();
+
+	
+	x.length = 3;
+	sprintf(x.data, "aaa");
+	//x.data = nap;
 	
 	xSemaphoreGive( blockReadingTask );
 	
 	while (1)
 	{
-		if( xSemaphoreTake( xSemaphore, portMAX_DELAY ) == pdTRUE )
+//		xQueueSend(sendQueue,  &(wsk_x), ( portTickType ) 0 );
+	}
+}
+
+
+
+
+void sendingTask(void * param)
+{
+	OnePacket * packet;
+	while( sendQueue == NULL );
+	while(1)
+	{
+		if( xQueueReceive(sendQueue, &packet, portMAX_DELAY ) == pdTRUE )
 		{
-			UDPsend_packet("aaa",3);
+			while( xSemaphoreTake( xSemaphore, portMAX_DELAY ) != pdTRUE );
+			
+			UDPsend_packet(packet->data,packet->length);
+			
 			xSemaphoreGive( xSemaphore );
-					
-			vTaskDelay(10);
 		}
 	}
 }
@@ -150,19 +180,26 @@ void MainTask(void * pvParameters)
 
 
 u8_t rcvBuffer[600];
+static int rcvSize = 0;
 void ReadingTask(void * pvParameters)
 {
+	OnePacket packet;
+	OnePacket * pointer_to_packet = &packet;
+	
 	while( xSemaphore == NULL );
 	while(1)
 	{
 		if ( xSemaphoreTake(dataToRead, portMAX_DELAY) == pdTRUE )
 		{
-			UDPreceive_packet(rcvBuffer, 20);
+			rcvSize = UDPreceive_packet(rcvBuffer);
 			
 			if( xSemaphoreTake( xSemaphore, portMAX_DELAY ) == pdTRUE )
 			{
-				//vTaskDelay(10);
-				UDPsend_packet(rcvBuffer, 20);
+				pointer_to_packet->data[0] = (rcvSize >> 8);
+				pointer_to_packet->data[1] = (rcvSize & 0xFF);
+				pointer_to_packet->length = 2;
+				xQueueSend(sendQueue, &pointer_to_packet, 0);
+				//UDPsend_packet(rcvBuffer, 20);
 				xSemaphoreGive( xSemaphore );
 			}
 		}
@@ -190,24 +227,24 @@ int main(void)
 	dataToRead = xSemaphoreCreateMutex();	
 	xSemaphoreTake( dataToRead, portMAX_DELAY );
 	
+	sendQueue = xQueueCreate(100, sizeof( OnePacket * ));
+	receiveQueue = xQueueCreate(100, sizeof( OnePacket * ));
+	
+	
+	
+	
 	LCD_LED_Init();
 	ETH_BSP_Config();
 	LwIP_Init();
-	sys_thread_new("Main", MainTask, NULL, DEFAULT_THREAD_STACKSIZE,
-			( tskIDLE_PRIORITY + 3));
+	sys_thread_new("Main", MainTask, NULL, DEFAULT_THREAD_STACKSIZE,( tskIDLE_PRIORITY + 2));
 	
-#ifdef USE_DHCP
-	/* Start DHCPClient */
-	xTaskCreate(LwIP_DHCP_task, "DHCPClient", configMINIMAL_STACK_SIZE * 2, NULL,DHCP_TASK_PRIO, NULL);
-#endif
+	
+	
+	xTaskCreate(ToggleLed4, (const signed char *)"LED4", configMINIMAL_STACK_SIZE, NULL,( tskIDLE_PRIORITY + 4), NULL);
+	xTaskCreate(ReadingTask, (const signed char *)"ReadingTask", DEFAULT_THREAD_STACKSIZE, NULL,( tskIDLE_PRIORITY + 4), NULL);
+	xTaskCreate(sendingTask, (const signed char *)"sendingTask", DEFAULT_THREAD_STACKSIZE, NULL,( tskIDLE_PRIORITY + 3), NULL);
 
-	
-	
-	/* Start toogleLed4 task : Toggle LED4  every 250ms */
-	xTaskCreate(ToggleLed4, (const signed char *)"LED4", configMINIMAL_STACK_SIZE, NULL,( tskIDLE_PRIORITY + 3), NULL);
-	xTaskCreate(ReadingTask, (const signed char *)"ReadingTask", DEFAULT_THREAD_STACKSIZE, NULL,( tskIDLE_PRIORITY + 3), NULL);
 
-//xTaskCreate(MainTask, "Main", configMINIMAL_STACK_SIZE, NULL, LED_TASK_PRIO, NULL);
 
 	/* Start scheduler */
 	vTaskStartScheduler();

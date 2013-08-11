@@ -88,11 +88,14 @@ void UDPsend_packet(void * data, u16_t len)
 	netconn_send(Connection, UDPbuffer);
 	netconn_disconnect(Connection);
 }
-void UDPreceive_packet(void * destination, u16_t len)
+u16_t UDPreceive_packet(void * destination)
 {
+	u16_t size = 0;
 	UDPbuffer = netconn_recv(Connection);
-	netbuf_copy(UDPbuffer, destination, len);
+	netbuf_copy(UDPbuffer, destination, UDPbuffer->p->tot_len);
+	size = UDPbuffer->p->tot_len;
 	netbuf_delete(UDPbuffer);
+	return size;
 }
 
 
