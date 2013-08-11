@@ -125,13 +125,13 @@ void ToggleLed4(void * pvParameters)
 	}
 }
 
-xSemaphoreHandle xSemaphore = NULL, blockReadingTask = NULL, dataToRead = NULL;
+xSemaphoreHandle xSemaphore = NULL, blockReadingTask = NULL, dataToRead = NULL, networkOK = NULL;
 xQueueHandle sendQueue = NULL, receiveQueue = NULL;
 
 typedef struct 
 {
+	u16_t length; //2 bytes
 	char data[560];
-	int length;
 } OnePacket;
 
 
@@ -150,7 +150,7 @@ void MainTask(void * pvParameters)
 	//x.data = nap;
 	
 	xSemaphoreGive( blockReadingTask );
-	
+	xSemaphoreGive( networkOK );
 	while (1)
 	{
 //		xQueueSend(sendQueue,  &(wsk_x), ( portTickType ) 0 );
@@ -164,6 +164,9 @@ void sendingTask(void * param)
 {
 	OnePacket * packet;
 	while( sendQueue == NULL );
+	while( networkOK == NULL );
+	while( xSemaphoreTake(networkOK, portMAX_DELAY) != pdTRUE );
+	xSemaphoreGive( networkOK );
 	while(1)
 	{
 		if( xQueueReceive(sendQueue, &packet, portMAX_DELAY ) == pdTRUE )
@@ -172,6 +175,7 @@ void sendingTask(void * param)
 			
 			UDPsend_packet(packet->data,packet->length);
 			
+			free(packet);
 			xSemaphoreGive( xSemaphore );
 		}
 	}
@@ -187,6 +191,10 @@ void ReadingTask(void * pvParameters)
 	OnePacket * pointer_to_packet = &packet;
 	
 	while( xSemaphore == NULL );
+	while( networkOK == NULL );
+	while( xSemaphoreTake(networkOK, portMAX_DELAY) != pdTRUE );
+	xSemaphoreGive( networkOK );
+	
 	while(1)
 	{
 		if ( xSemaphoreTake(dataToRead, portMAX_DELAY) == pdTRUE )
@@ -195,9 +203,11 @@ void ReadingTask(void * pvParameters)
 			
 			if( xSemaphoreTake( xSemaphore, portMAX_DELAY ) == pdTRUE )
 			{
+				pointer_to_packet = malloc(4);
 				pointer_to_packet->data[0] = (rcvSize >> 8);
 				pointer_to_packet->data[1] = (rcvSize & 0xFF);
 				pointer_to_packet->length = 2;
+				
 				xQueueSend(sendQueue, &pointer_to_packet, 0);
 				//UDPsend_packet(rcvBuffer, 20);
 				xSemaphoreGive( xSemaphore );
@@ -227,8 +237,11 @@ int main(void)
 	dataToRead = xSemaphoreCreateMutex();	
 	xSemaphoreTake( dataToRead, portMAX_DELAY );
 	
+	networkOK = xSemaphoreCreateMutex();
+	xSemaphoreTake(networkOK, portMAX_DELAY);
+	
 	sendQueue = xQueueCreate(100, sizeof( OnePacket * ));
-	receiveQueue = xQueueCreate(100, sizeof( OnePacket * ));
+	receiveQueue = xQueueCreate(10, sizeof( OnePacket * ));
 	
 	
 	

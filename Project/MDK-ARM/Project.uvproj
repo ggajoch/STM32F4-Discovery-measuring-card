@@ -145,7 +145,7 @@
             <CpuDllArguments></CpuDllArguments>
             <PeripheralDll></PeripheralDll>
             <PeripheralDllArguments></PeripheralDllArguments>
-            <InitializationFile>..\..\..\..\..\..\..\..\..\..\..\Keil\ARM\Boards\Keil\MCBSTM32C\Blinky_ULp\STM32_SWO.ini</InitializationFile>
+            <InitializationFile>.\Dbg_RAM.ini</InitializationFile>
           </SimDlls>
           <TargetDlls>
             <CpuDll></CpuDll>
