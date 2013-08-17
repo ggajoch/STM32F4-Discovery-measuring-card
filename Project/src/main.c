@@ -125,39 +125,61 @@ void ToggleLed4(void * pvParameters)
 	}
 }
 
-xSemaphoreHandle xSemaphore = NULL, blockReadingTask = NULL, dataToRead = NULL, networkOK = NULL;
+xSemaphoreHandle blockEthernetInterface = NULL, blockReadingTask = NULL, dataToRead = NULL, networkOK = NULL;
 xQueueHandle sendQueue = NULL, receiveQueue = NULL;
 static struct netconn *UDPConnection;
 
 typedef struct 
 {
 	u16_t length; //2 bytes
-	char data[560];
+	char  * data;//[560];
 } OnePacket;
-#define OnePacketMAXSIZE 570
+
+
+typedef struct
+{
+	u8_t command;
+	u8_t nrOfParameters;
+	u32_t * Parameters;
+} Cluster;
 
 void MainTask(void * pvParameters)
 {
 	OnePacket x;
 	OnePacket * wsk_x = &x;
 	char nap[] = "aaa";
-	
+	u8_t i;
+
 	UART_Setup();
 	UDPConnection = UDPsetup_network();
 
-	
+
 	x.length = 3;
 	sprintf(x.data, "aaa");
 	//x.data = nap;
-	
+
 	xSemaphoreGive( blockReadingTask );
 	xSemaphoreGive( networkOK );
 	while (1)
 	{
-		OnePacket * wsk_packet;
+		OnePacket * wsk_packet, *ww;
+		Cluster * command;
 		if( xQueueReceive(receiveQueue, &wsk_packet, portMAX_DELAY) == pdTRUE)
 		{
-			xQueueSend(sendQueue, &wsk_packet, 0);
+			//xQueueSend(sendQueue, &wsk_packet, 0);
+			command = (void *)&(wsk_packet->data[0]);
+			
+			
+			ww = pvPortMalloc(2+wsk_packet->length);
+			ww->length = wsk_packet->length;
+			//ww->data = (void *)command;
+			for(i=0; i < ww->length; ++i)
+			{
+				ww->data[i] = wsk_packet->data[i];
+			}
+			xQueueSend(sendQueue, &ww, 0);
+			
+			vPortFree(wsk_packet);
 		}
 	}
 }
@@ -176,12 +198,12 @@ void sendingTask(void * param)
 	{
 		if( xQueueReceive(sendQueue, &packet, portMAX_DELAY ) == pdTRUE )
 		{
-			while( xSemaphoreTake( xSemaphore, portMAX_DELAY ) != pdTRUE );
-			
+			while( xSemaphoreTake( blockEthernetInterface, portMAX_DELAY ) != pdTRUE );
+
 			UDPsend_packet(packet->data,packet->length);
-			
-			free(packet);
-			xSemaphoreGive( xSemaphore );
+
+			vPortFree(packet);
+			xSemaphoreGive( blockEthernetInterface );
 		}
 	}
 }
@@ -194,12 +216,12 @@ void ReadingTask(void * pvParameters)
 {
 	OnePacket * pointer_to_packet;
 	static struct netbuf *UDPbuffer;
-	
-	while( xSemaphore == NULL );
+
+	while( blockEthernetInterface == NULL );
 	while( networkOK == NULL );
 	while( xSemaphoreTake(networkOK, portMAX_DELAY) != pdTRUE );
 	xSemaphoreGive( networkOK );
-	
+
 	while(1)
 	{
 		if ( xSemaphoreTake(dataToRead, portMAX_DELAY) == pdTRUE )
@@ -207,11 +229,11 @@ void ReadingTask(void * pvParameters)
 			//pointer_to_packet = malloc(OnePacketMAXSIZE
 			//rcvSize = UDPreceive_packet(rcvBuffer);
 			UDPbuffer = netconn_recv(UDPConnection);
-			pointer_to_packet = malloc(2+UDPbuffer->p->tot_len);
+			pointer_to_packet = pvPortMalloc(2+UDPbuffer->p->tot_len);
 			pointer_to_packet->length = UDPbuffer->p->tot_len;
 			netbuf_copy(UDPbuffer, pointer_to_packet->data, UDPbuffer->p->tot_len);
 			netbuf_delete(UDPbuffer);
-			
+
 			xQueueSend(receiveQueue, &pointer_to_packet, 0);
 		}
 	}
@@ -229,16 +251,17 @@ int main(void)
 	 */
 	
 	
-	xSemaphore = xSemaphoreCreateMutex();	
-	xSemaphoreGive( xSemaphore );
+	blockEthernetInterface = xSemaphoreCreateMutex();	
+	xSemaphoreGive( blockEthernetInterface );
 	
 	blockReadingTask = xSemaphoreCreateMutex();	
 	xSemaphoreTake( blockReadingTask, portMAX_DELAY );
 	
-	dataToRead = xSemaphoreCreateMutex();	
+	vSemaphoreCreateBinary(dataToRead);
 	xSemaphoreTake( dataToRead, portMAX_DELAY );
 	
-	networkOK = xSemaphoreCreateMutex();
+	//networkOK = xSemaphoreCreateMutex();
+	vSemaphoreCreateBinary(networkOK);
 	xSemaphoreTake(networkOK, portMAX_DELAY);
 	
 	sendQueue = xQueueCreate(100, sizeof( OnePacket * ));

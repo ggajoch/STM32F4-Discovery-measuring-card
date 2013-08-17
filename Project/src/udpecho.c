@@ -50,9 +50,10 @@ static unsigned short Port;
 
 extern xSemaphoreHandle dataToRead;
 
+portBASE_TYPE taskWoken;
 void giveSem(struct netconn * a, enum netconn_evt b, u16_t len)
 {
-	xSemaphoreGive(dataToRead);
+	xSemaphoreGiveFromISR(dataToRead, &taskWoken);
 }
 
 struct netconn * UDPsetup_network()
