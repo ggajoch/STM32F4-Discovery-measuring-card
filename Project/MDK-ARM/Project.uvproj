@@ -393,11 +393,6 @@
           <GroupName>User</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\src\main.c</FilePath>
-            </File>
-            <File>
               <FileName>system_stm32f4xx.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\system_stm32f4xx.c</FilePath>
@@ -431,6 +426,11 @@
               <FileName>LCD.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src\LCD.c</FilePath>
+            </File>
+            <File>
+              <FileName>main.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\src\main.cpp</FilePath>
             </File>
           </Files>
         </Group>
