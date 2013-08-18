@@ -130,28 +130,46 @@ xSemaphoreHandle blockEthernetInterface = NULL, blockReadingTask = NULL, dataToR
 xQueueHandle sendQueue = NULL, receiveQueue = NULL;
 static struct netconn *UDPConnection;
 
-typedef struct 
+struct OnePacket
 {
 	u16_t length; //2 bytes
-	char  * data;//[560];
-} OnePacket;
-
-
-/*typedef struct
-{
-	u8_t command;
-	u8_t nrOfParameters;
-	u32_t * Parameters;
-} Cluster*/
-
-class Cluster
-{
-	u8_t command;
-	u8_t nrOfParameters;
-	u32_t * Parameters;
-	Cluster(u8_t len)
+	char  data[560];
+	void clean()
 	{
-		
+		vPortFree(this);
+	}
+} ;
+
+
+struct Cluster
+{
+	u8_t command;
+	u8_t nrOfParameters;
+	u32_t parameters[125];
+	void parseCommand()
+	{
+		OnePacket * response;
+		if( command == COMMAND_TEST )
+		{
+			//test commands
+			if( nrOfParameters == 2 && parameters[0] == 2 && parameters[1] == 3 )
+			{
+				response = (OnePacket *)pvPortMalloc(2+2);
+				response->length = 2;
+				response->data[0] = 'O';
+				response->data[1] = 'K';
+				xQueueSend(sendQueue, &response, 0);
+			}
+			else
+			{
+				response = (OnePacket *)pvPortMalloc(2+3);
+				response->length = 3;
+				response->data[0] = 'E';
+				response->data[1] = 'R';
+				response->data[2] = 'R';
+				xQueueSend(sendQueue, &response, 0);
+			}
+		}
 	}
 };
 
@@ -175,23 +193,17 @@ void MainTask(void * pvParameters)
 	while (1)
 	{
 		OnePacket * wsk_packet, *ww;
-		Cluster * command;
+		Cluster * order;
 		if( xQueueReceive(receiveQueue, &wsk_packet, portMAX_DELAY) == pdTRUE)
 		{
 			//xQueueSend(sendQueue, &wsk_packet, 0);
-			command = (Cluster *)&(wsk_packet->data[0]);
+			order = (Cluster *)&(wsk_packet->data[0]);
+			order->parseCommand();
+			wsk_packet->clean();
 			
 			
-			ww = (OnePacket *)pvPortMalloc(2+wsk_packet->length);
-			ww->length = wsk_packet->length;
-			//ww->data = (void *)command;
-			for(i=0; i < ww->length; ++i)
-			{
-				ww->data[i] = wsk_packet->data[i];
-			}
-			xQueueSend(sendQueue, &ww, 0);
 			
-			vPortFree(wsk_packet);
+			//vPortFree(wsk_packet);
 		}
 	}
 }
@@ -285,10 +297,9 @@ int main(void)
 	LCD_LED_Init();
 	ETH_BSP_Config();
 	LwIP_Init();
-	sys_thread_new("Main", MainTask, NULL, DEFAULT_THREAD_STACKSIZE,( tskIDLE_PRIORITY + 2));
 	
 	
-	
+	sys_thread_new("Main", MainTask, NULL, DEFAULT_THREAD_STACKSIZE,( tskIDLE_PRIORITY + 3));
 	xTaskCreate(ToggleLed4, (const signed char *)"LED4", configMINIMAL_STACK_SIZE, NULL,( tskIDLE_PRIORITY + 4), NULL);
 	xTaskCreate(ReadingTask, (const signed char *)"ReadingTask", DEFAULT_THREAD_STACKSIZE, NULL,( tskIDLE_PRIORITY + 4), NULL);
 	xTaskCreate(sendingTask, (const signed char *)"sendingTask", DEFAULT_THREAD_STACKSIZE, NULL,( tskIDLE_PRIORITY + 3), NULL);

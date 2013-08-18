@@ -92,6 +92,19 @@ extern volatile int TTime;
 
 
 
+
+
+
+// COMMANDS
+#define COMMAND_TEST 0
+
+
+
+
+
+
+
+
 #ifdef __cplusplus
 }
 #endif
