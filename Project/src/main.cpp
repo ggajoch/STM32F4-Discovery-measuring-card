@@ -10,6 +10,9 @@ extern "C" {
 #include "udpecho.h"
 #include "LCD.h"
 }
+#include "sendRcvTask.h"
+#include "commandProcessing.h"
+
 #define LED_TASK_PRIO    ( tskIDLE_PRIORITY + 1 )
 
 
@@ -126,52 +129,7 @@ void ToggleLed4(void * pvParameters)
 	}
 }
 
-xSemaphoreHandle blockEthernetInterface = NULL, blockReadingTask = NULL, dataToRead = NULL, networkOK = NULL;
-xQueueHandle sendQueue = NULL, receiveQueue = NULL;
-static struct netconn *UDPConnection;
 
-struct OnePacket
-{
-	u16_t length; //2 bytes
-	char  data[560];
-	void clean()
-	{
-		vPortFree(this);
-	}
-} ;
-
-
-struct Cluster
-{
-	u8_t command;
-	u8_t nrOfParameters;
-	u32_t parameters[125];
-	void parseCommand()
-	{
-		OnePacket * response;
-		if( command == COMMAND_TEST )
-		{
-			//test commands
-			if( nrOfParameters == 2 && parameters[0] == 2 && parameters[1] == 3 )
-			{
-				response = (OnePacket *)pvPortMalloc(2+2);
-				response->length = 2;
-				response->data[0] = 'O';
-				response->data[1] = 'K';
-				xQueueSend(sendQueue, &response, 0);
-			}
-			else
-			{
-				response = (OnePacket *)pvPortMalloc(2+3);
-				response->length = 3;
-				response->data[0] = 'E';
-				response->data[1] = 'R';
-				response->data[2] = 'R';
-				xQueueSend(sendQueue, &response, 0);
-			}
-		}
-	}
-};
 
 void MainTask(void * pvParameters)
 {
@@ -211,57 +169,6 @@ void MainTask(void * pvParameters)
 
 
 
-void sendingTask(void * param)
-{
-	OnePacket * packet;
-	while( sendQueue == NULL );
-	while( networkOK == NULL );
-	while( xSemaphoreTake(networkOK, portMAX_DELAY) != pdTRUE );
-	xSemaphoreGive( networkOK );
-	while(1)
-	{
-		if( xQueueReceive(sendQueue, &packet, portMAX_DELAY ) == pdTRUE )
-		{
-			while( xSemaphoreTake( blockEthernetInterface, portMAX_DELAY ) != pdTRUE );
-
-			UDPsend_packet(packet->data,packet->length);
-
-			vPortFree(packet);
-			xSemaphoreGive( blockEthernetInterface );
-		}
-	}
-}
-
-
-
-u8_t rcvBuffer[600];
-static int rcvSize = 0;
-void ReadingTask(void * pvParameters)
-{
-	OnePacket * pointer_to_packet;
-	static struct netbuf *UDPbuffer;
-
-	while( blockEthernetInterface == NULL );
-	while( networkOK == NULL );
-	while( xSemaphoreTake(networkOK, portMAX_DELAY) != pdTRUE );
-	xSemaphoreGive( networkOK );
-
-	while(1)
-	{
-		if ( xSemaphoreTake(dataToRead, portMAX_DELAY) == pdTRUE )
-		{
-			//pointer_to_packet = malloc(OnePacketMAXSIZE
-			//rcvSize = UDPreceive_packet(rcvBuffer);
-			UDPbuffer = netconn_recv(UDPConnection);
-			pointer_to_packet = (OnePacket *)pvPortMalloc(2+UDPbuffer->p->tot_len);
-			pointer_to_packet->length = UDPbuffer->p->tot_len;
-			netbuf_copy(UDPbuffer, pointer_to_packet->data, UDPbuffer->p->tot_len);
-			netbuf_delete(UDPbuffer);
-
-			xQueueSend(receiveQueue, &pointer_to_packet, 0);
-		}
-	}
-}
 
 
 

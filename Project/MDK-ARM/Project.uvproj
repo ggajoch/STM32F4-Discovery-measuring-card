@@ -432,6 +432,26 @@
               <FileType>8</FileType>
               <FilePath>..\src\main.cpp</FilePath>
             </File>
+            <File>
+              <FileName>commandProcessing.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\src\commandProcessing.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>digitalIO.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\src\digitalIO.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>sendRcvTask.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\src\sendRcvTask.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>errorHandlers.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\src\errorHandlers.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
