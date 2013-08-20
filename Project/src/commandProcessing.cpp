@@ -2,7 +2,7 @@
 #include "commandProcessing.h"
 #include "errorHandlers.h"
 #include <inttypes.h>
-
+#include "digitalIO.h"
 
 u8_t Cluster::check_for_parameters(u8_t expected)
 {
@@ -48,6 +48,11 @@ void Cluster::parseCommand()
 	else if( command == COMMAND_PINMODE )
 	{
 		if( !check_for_parameters(2) ) return;
-		//digitalIOSetPinMode(parameters[0], parameters[1]);
+		digitalIOSetPinMode(parameters[0], parameters[1]);
+	}
+	else if( command == COMMAND_PINMODE )
+	{
+		if( !check_for_parameters(2) ) return;
+		digitalIOSetPinMode(parameters[0], parameters[1]);
 	}
 }
