@@ -452,6 +452,7 @@
               <FileType>8</FileType>
               <FilePath>..\src\errorHandlers.cpp</FilePath>
             </File>
+<<<<<<< HEAD
             <File>
               <FileName>analogIN.cpp</FileName>
               <FileType>8</FileType>
@@ -467,6 +468,8 @@
               <FileType>8</FileType>
               <FilePath>..\src\timers.cpp</FilePath>
             </File>
+=======
+>>>>>>> 4d952ce31d2b42dcf8df8c3f090d012ebe0be2d7
           </Files>
         </Group>
         <Group>

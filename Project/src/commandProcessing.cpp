@@ -3,18 +3,25 @@
 #include "errorHandlers.h"
 #include <inttypes.h>
 #include "digitalIO.h"
+<<<<<<< HEAD
 #include "analogIN.h"
 #include "timers.h"
 #include "internalDAC.h"
 #include <stm32f4xx_adc.h>
 
 #define GLUE(a,b) (a ## b)
+=======
+>>>>>>> 4d952ce31d2b42dcf8df8c3f090d012ebe0be2d7
 
 u8_t Cluster::check_for_parameters(u8_t expected)
 {
 		if( this->nrOfParameters != expected )
 		{
+<<<<<<< HEAD
 			send_error_code(1);
+=======
+			send_error_code(this->nrOfParameters);
+>>>>>>> 4d952ce31d2b42dcf8df8c3f090d012ebe0be2d7
 			return false;
 		}
 		return true;
@@ -28,6 +35,7 @@ void send_debug_info(char * txt)
 	xQueueSend(sendQueue, &response, 0);
 }
 
+<<<<<<< HEAD
 
 void send_ok_resp()
 {
@@ -39,6 +47,8 @@ void send_ok_resp()
 	xQueueSend(sendQueue, &response, 0);
 }
 
+=======
+>>>>>>> 4d952ce31d2b42dcf8df8c3f090d012ebe0be2d7
 static u8_t xxx;
 void Cluster::parseCommand()
 {
@@ -50,6 +60,10 @@ void Cluster::parseCommand()
 		if( !check_for_parameters(2) ) return;
 		if( nrOfParameters == 2 && parameters[0] == 2 && parameters[1] == 3 )
 		{
+<<<<<<< HEAD
+=======
+				OnePacket * response;
+>>>>>>> 4d952ce31d2b42dcf8df8c3f090d012ebe0be2d7
 				response = (OnePacket *)pvPortMalloc(2+2);
 				response->length = 2;
 				response->data[0] = 'O';
@@ -58,6 +72,7 @@ void Cluster::parseCommand()
 		}
 		else 
 		{
+<<<<<<< HEAD
 			send_error_code(3);
 		}
 	}
@@ -249,5 +264,19 @@ void Cluster::parseCommand()
 	else
 	{
 		send_error_code(2);
+=======
+			send_error_code(0);
+		}
+	}
+	else if( command == COMMAND_PINMODE )
+	{
+		if( !check_for_parameters(2) ) return;
+		digitalIOSetPinMode(parameters[0], parameters[1]);
+	}
+	else if( command == COMMAND_PINMODE )
+	{
+		if( !check_for_parameters(2) ) return;
+		digitalIOSetPinMode(parameters[0], parameters[1]);
+>>>>>>> 4d952ce31d2b42dcf8df8c3f090d012ebe0be2d7
 	}
 }

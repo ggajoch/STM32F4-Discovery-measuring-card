@@ -129,6 +129,10 @@ void ToggleLed4(void * pvParameters)
 	}
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4d952ce31d2b42dcf8df8c3f090d012ebe0be2d7
 
 extern xQueueHandle analogINReadQueue;
 void MainTask(void * pvParameters)

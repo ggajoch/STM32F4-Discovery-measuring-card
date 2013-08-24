@@ -2,11 +2,19 @@
 #define __DIGITALIO_H__
 
 #include <inttypes.h>
+<<<<<<< HEAD
 void digitalIOSetPinMode(u8_t pinNumber, GPIOMode_TypeDef direction, GPIOOType_TypeDef OutType, GPIOPuPd_TypeDef pullUps);
 
 void digitalIOWritePin(uint8_t pinNumber, uint8_t pinValue);
 
 uint8_t digitalIOreadPin(uint8_t pinNumber);
+=======
+void digitalIOSetPinMode(uint8_t pinNumber, uint8_t direction);
+
+void digitalIOWritePin(uint8_t pinNumber, uint8_t pinValue);
+
+uint8_t digitalIOreadPinValue(uint8_t pinNumber);
+>>>>>>> 4d952ce31d2b42dcf8df8c3f090d012ebe0be2d7
 
 void digitalIOWritePort(uint16_t portValue);
 

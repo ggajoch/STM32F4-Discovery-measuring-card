@@ -26,6 +26,7 @@ struct OnePacket
 	{
 		vPortFree(this);
 	}
+<<<<<<< HEAD
 };
 
 struct ReturnTableOf16bits
@@ -37,6 +38,10 @@ struct ReturnTableOf16bits
 		vPortFree(this);
 	}
 };
+=======
+} ;
+
+>>>>>>> 4d952ce31d2b42dcf8df8c3f090d012ebe0be2d7
 
 struct Cluster
 {
