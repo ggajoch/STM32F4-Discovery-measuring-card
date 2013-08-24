@@ -71,7 +71,7 @@
 #define configUSE_TICK_HOOK	        0
 #define configCPU_CLOCK_HZ          ( ( unsigned long ) 144000000 )	
 #define configTICK_RATE_HZ	        ( ( portTickType ) 1000 )
-#define configMAX_PRIORITIES		    ( ( unsigned portBASE_TYPE ) 7 )
+#define configMAX_PRIORITIES		    ( ( unsigned portBASE_TYPE ) 100 )
 #define configMINIMAL_STACK_SIZE	  ( ( unsigned short ) 128 )
 #define configTOTAL_HEAP_SIZE		    ( ( size_t ) ( 15 * 1024 ) )
 #define configMAX_TASK_NAME_LEN		  ( 16 )
@@ -109,6 +109,8 @@ priority values, 0 to 15.  This must correspond to the
 configKERNEL_INTERRUPT_PRIORITY setting.  Here 15 corresponds to the lowest
 NVIC value of 255. */
 #define configLIBRARY_KERNEL_INTERRUPT_PRIORITY	15
+
+#define configCHECK_FOR_STACK_OVERFLOW 2
 
 #endif /* FREERTOS_CONFIG_H */
 

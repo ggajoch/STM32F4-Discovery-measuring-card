@@ -72,12 +72,12 @@ struct netconn * UDPsetup_network()
 			return Connection;
 		}
 	}
-	if( netconn_connect(Connection, &Address, Port) != ERR_OK )
+	/*if( netconn_connect(Connection, &Address, Port) != ERR_OK )
 	{
 		while(1)
 		{
 		}
-	}
+	}*/
 	//UDPbuffer = netbuf_new();
 	return Connection;
 }

@@ -85,7 +85,7 @@ extern volatile int TTime;
 #define GW_ADDR0   192
 #define GW_ADDR1   168
 #define GW_ADDR2   1
-#define GW_ADDR3   1 
+#define GW_ADDR3   1
 
 /* MII and RMII mode selection, for STM324xG-EVAL Board(MB786) RevB ***********/
 #define RMII_MODE 
@@ -96,14 +96,19 @@ extern volatile int TTime;
 
 
 // COMMANDS
-#define COMMAND_TEST 0
-
-
-
-
-
-
-
+#define COMMAND_TEST 										1
+#define COMMAND_digitalIOSetPinMode 		2
+#define COMMAND_digitalIOWritePin 			3
+#define COMMAND_digitalIOreadPin 				4
+#define COMMAND_digitalIOWritePort 			5
+#define COMMAND_digitalIOReadPort 			6
+#define COMMAND_analogInit							7
+#define COMMAND_analogInitChannel				8
+#define COMMAND_analogReadPin						9
+#define COMMAND_internalDAC_Init				10
+#define COMMAND_internalDAC_Write				11
+#define COMMAND_getCoreClock						12
+#define COMMAND_TIMER_Init							13
 
 #ifdef __cplusplus
 }

@@ -65,6 +65,19 @@ task.h is included from an application file. */
 #include "task.h"
 #include "StackMacros.h"
 
+
+
+
+
+
+void vApplicationStackOverflowHook( xTaskHandle *pxTask, signed char *pcTaskName )
+{
+	volatile char x = 0;
+}
+
+
+
+
 #undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
 
 /*

@@ -322,7 +322,7 @@
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
-                <StartAddress>0x20010000</StartAddress>
+                <StartAddress>0x20011000</StartAddress>
                 <Size>0x10000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
@@ -431,6 +431,41 @@
               <FileName>main.cpp</FileName>
               <FileType>8</FileType>
               <FilePath>..\src\main.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>commandProcessing.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\src\commandProcessing.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>digitalIO.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\src\digitalIO.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>sendRcvTask.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\src\sendRcvTask.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>errorHandlers.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\src\errorHandlers.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>analogIN.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\src\analogIN.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>internalDAC.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\src\internalDAC.cpp</FilePath>
+            </File>
+            <File>
+              <FileName>timers.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\src\timers.cpp</FilePath>
             </File>
           </Files>
         </Group>

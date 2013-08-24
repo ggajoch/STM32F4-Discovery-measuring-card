@@ -56,6 +56,7 @@
 /* lwip includes */
 #include "lwip/sys.h"
 
+
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -192,6 +193,47 @@ void ETH_IRQHandler(void)
     portEND_SWITCHING_ISR( xHigherPriorityTaskWoken );
   }
 }
+
+
+extern xSemaphoreHandle waitForADC;
+extern xQueueHandle analogINReadQueue;
+
+void ADC_IRQHandler()
+{
+	static signed portBASE_TYPE xHigherPriorityTaskWoken; 
+	
+	//xSemaphoreGiveFromISR(waitForADC, &xHigherPriorityTaskWoken);
+	
+	
+	uint16_t res;
+	if( ADC_GetITStatus(ADC1, ADC_IT_EOC) )
+	{
+		ADC_ClearITPendingBit(ADC1, ADC_IT_EOC);
+		res = ADC_GetConversionValue(ADC1);
+	}
+	if( ADC_GetITStatus(ADC2, ADC_IT_EOC) )
+	{
+		ADC_ClearITPendingBit(ADC2, ADC_IT_EOC);
+		res = ADC_GetConversionValue(ADC2);
+	}
+	if( ADC_GetITStatus(ADC3, ADC_IT_EOC) )
+	{
+		ADC_ClearITPendingBit(ADC3, ADC_IT_EOC);
+		res = ADC_GetConversionValue(ADC3);
+	}
+	xQueueSendFromISR(analogINReadQueue, &res, 0);
+	
+	/*if( ADC_GetITStatus(ADC1, ADC_IT_EOC) )
+		xSemaphoreGiveFromISR(waitForADC1, &xHigherPriorityTaskWoken);
+	else if( ADC_GetITStatus(ADC2, ADC_IT_EOC) )
+		xSemaphoreGiveFromISR(waitForADC2, &xHigherPriorityTaskWoken);
+	else if( ADC_GetITStatus(ADC3, ADC_IT_EOC) )
+		xSemaphoreGiveFromISR(waitForADC3, &xHigherPriorityTaskWoken);*/
+}
+
+
+
+
 
 /******************************************************************************/
 /*                 STM32F4xx Peripherals Interrupt Handlers                   */
