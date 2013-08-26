@@ -231,6 +231,14 @@ void ADC_IRQHandler()
 		xSemaphoreGiveFromISR(waitForADC3, &xHigherPriorityTaskWoken);*/
 }
 
+void TIM3_IRQHandler()
+{
+	if( TIM_GetITStatus(TIM3, TIM_IT_Update) )
+	{
+		TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
+		STM_EVAL_LEDToggle(LED3);
+	}
+}
 
 
 

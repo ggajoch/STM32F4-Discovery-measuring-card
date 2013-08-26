@@ -6,7 +6,7 @@ void LCD_LED_Init(void)
 	/* Initialize the STM324xG-EVAL's LCD */
 	STM32f4_Discovery_LCD_Init();
 #endif
-
+	STM_EVAL_LEDInit(LED3);
 	STM_EVAL_LEDInit(LED4);
 #ifdef USE_LCD
 	/* Clear the LCD */

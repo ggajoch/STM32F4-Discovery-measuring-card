@@ -194,7 +194,7 @@ void Cluster::parseCommand()
 		else if( parameters[0] == 2 )
 			res = analogReadPin(ADC3, parameters[1]);
 		
-		ReturnTableOf16bits * ret = (ReturnTableOf16bits *)pvPortMalloc(4);
+		TableOf16bits * ret = (TableOf16bits *)pvPortMalloc(4);
 		ret->length = 2;
 		//ret->data[0] = htons(res);
 		ret->data[0] = res;
@@ -231,7 +231,7 @@ void Cluster::parseCommand()
 		if( !check_for_parameters(0) ) return;
 		uint32_t clock = getCoreClock();
 		
-		ReturnTableOf16bits * ret = (ReturnTableOf16bits *)pvPortMalloc(6);
+		TableOf16bits * ret = (TableOf16bits *)pvPortMalloc(6);
 		ret->length = 4;
 		ret->data[0] = (clock >> 16);
 		ret->data[1] = (clock & 0xFFFF);
@@ -241,8 +241,10 @@ void Cluster::parseCommand()
 	else if ( command == COMMAND_TIMER_Init )
 	{
 		//static inline void TIMER_Init(TIM_TypeDef* TIMx, uint32_t period, uint16_t prescaler);
+		if( !check_for_parameters(2) ) return;
+		TIMER_Init(TIM3, parameters[0], parameters[1]);
+		send_ok_resp();
 	}
-		
 
 	
 	

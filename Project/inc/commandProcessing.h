@@ -28,7 +28,7 @@ struct OnePacket
 	}
 };
 
-struct ReturnTableOf16bits
+struct TableOf16bits
 {
 	u16_t length; //2 bytes
 	u16_t data[280];

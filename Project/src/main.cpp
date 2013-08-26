@@ -123,7 +123,7 @@ void ToggleLed4(void * pvParameters)
 	{
 		for (;;)
 		{
-			STM_EVAL_LEDToggle(LED4);
+			//STM_EVAL_LEDToggle(LED4);
 			vTaskDelay(100);
 		}
 	}
