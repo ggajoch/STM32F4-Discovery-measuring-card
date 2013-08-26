@@ -142,25 +142,24 @@ void ToggleLed4(void * pvParameters)
 	}
 }
 
-PointerToTableOf16bits resp;
-PointerToTableOf16bits * ptr_resp;
-extern uint16_t adcMeasurements[540];
+OnePacket resp;
+extern uint8_t adcMeasurements[1080];
 extern "C" void DMA2_Stream0_IRQHandler()
 {
-	
-	if( DMA_GetFlagStatus(DMA2_Stream0, DMA_FLAG_TCIF0) )
+	resp.length = (540 | ( 1 << 13 ));
+	if( DMA_GetITStatus(DMA2_Stream0, DMA_IT_TCIF0) )
 	{
 		DMA_ClearITPendingBit(DMA2_Stream0, DMA_IT_TCIF0);
-		resp.data = (uint8_t *)&adcMeasurements;
-		xQueueSend(sendQueue, &ptr_resp, 0);
+		resp.data = (uint8_t *)&adcMeasurements[540];
+		xQueueSend(sendQueue, &resp, 0);
 	}
-	else if( DMA_GetFlagStatus(DMA2_Stream0, DMA_FLAG_HTIF0) )
+	else if( DMA_GetITStatus(DMA2_Stream0, DMA_IT_HTIF0) )
 	{
-		DMA_ClearITPendingBit(DMA2_Stream0, DMA_FLAG_HTIF0);
+		DMA_ClearITPendingBit(DMA2_Stream0, DMA_IT_HTIF0);
 		//OnePacket * tmp = (OnePacket *)&adcMeasurements;
 		//xQueueSend(sendQueue, &tmp, 0);
-		resp.data = (uint8_t *)&(adcMeasurements[540]);
-		xQueueSend(sendQueue, &ptr_resp, 0);
+		resp.data = (uint8_t *)&(adcMeasurements[0]);
+		xQueueSend(sendQueue, &resp, 0);
 	}
 }
 
@@ -181,14 +180,14 @@ void MainTask(void * pvParameters)
 	
 	while (1)
 	{
-		OnePacket * wsk_packet, *ww;
+		OnePacket wsk_packet, *ww;
 		Cluster * order;
 		if( xQueueReceive(receiveQueue, &wsk_packet, portMAX_DELAY) == pdTRUE)
 		{
 			//xQueueSend(sendQueue, &wsk_packet, 0);
-			order = (Cluster *)&(wsk_packet->data[0]);
+			order = (Cluster *)&(wsk_packet.data[0]);
 			order->parseCommand();
-			wsk_packet->clean();
+			wsk_packet.clean();
 			
 			//vPortFree(wsk_packet);
 		}
@@ -225,8 +224,8 @@ int main(void)
 	vSemaphoreCreateBinary(networkOK);
 	xSemaphoreTake(networkOK, portMAX_DELAY);
 	
-	sendQueue = xQueueCreate(10, sizeof( OnePacket * ));
-	receiveQueue = xQueueCreate(10, sizeof( OnePacket * ));
+	sendQueue = xQueueCreate(10, sizeof( OnePacket ));
+	receiveQueue = xQueueCreate(10, sizeof( OnePacket ));
 	analogINReadQueue = xQueueCreate(10, sizeof( uint16_t ));
 	
 	

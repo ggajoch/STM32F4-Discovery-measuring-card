@@ -23,27 +23,27 @@ u8_t Cluster::check_for_parameters(u8_t expected)
 
 void send_debug_info(char * txt)
 {
-	OnePacket * response;
-	sprintf(response->data,"DEBUG:%s",txt);
-	response->length = strlen(response->data);
+	OnePacket response;
+	sprintf((char *)response.data,"DEBUG:%s",txt);
+	response.length = strlen((char *)response.data);
 	xQueueSend(sendQueue, &response, 0);
 }
 
 
 void send_ok_resp()
 {
-	OnePacket * response;
-	response = (OnePacket *)pvPortMalloc(2+2);
-	response->length = 2;
-	response->data[0] = 'O';
-	response->data[1] = 'K';
+	OnePacket response;
+	response.data = (uint8_t *)pvPortMalloc(2);
+	response.length = 2;
+	response.data[0] = 'O';
+	response.data[1] = 'K';
 	xQueueSend(sendQueue, &response, 0);
 }
 
 static u8_t xxx;
 void Cluster::parseCommand()
 {
-	OnePacket * response;
+	OnePacket response;
 	xxx = command;
 	if( command == COMMAND_TEST )
 	{
@@ -51,10 +51,10 @@ void Cluster::parseCommand()
 		if( !check_for_parameters(2) ) return;
 		if( nrOfParameters == 2 && parameters[0] == 2 && parameters[1] == 3 )
 		{
-				response = (OnePacket *)pvPortMalloc(2+2);
-				response->length = 2;
-				response->data[0] = 'O';
-				response->data[1] = 'K';
+				response.data = (uint8_t *)pvPortMalloc(2);
+				response.length = 2;
+				response.data[0] = 'O';
+				response.data[1] = 'K';
 				xQueueSend(sendQueue, &response, 0);
 		}
 		else 
@@ -101,9 +101,9 @@ void Cluster::parseCommand()
 	{
 		if( !check_for_parameters(1) ) return;
 		//uint8_t digitalIOreadPin(uint8_t pinNumber);
-		response = (OnePacket *)pvPortMalloc(3);
-		response->length = 1;
-		response->data[0] = digitalIOreadPin(parameters[0]);;
+		response.data = (uint8_t *)pvPortMalloc(1);
+		response.length = 1;
+		response.data[0] = digitalIOreadPin(parameters[0]);;
 		xQueueSend(sendQueue, &response, 0);
 		//send_ok_resp();
 	}
@@ -118,9 +118,9 @@ void Cluster::parseCommand()
 	{
 		//uint16_t digitalIOReadPort()
 		if( !check_for_parameters(0) ) return;
-		response = (OnePacket *)pvPortMalloc(3);
-		response->length = 1;
-		response->data[0] = digitalIOReadPort();
+		response.data = (uint8_t *)pvPortMalloc(1);
+		response.length = 1;
+		response.data[0] = digitalIOReadPort();
 		xQueueSend(sendQueue, &response, 0);
 	}
 	
@@ -195,11 +195,12 @@ void Cluster::parseCommand()
 		else if( parameters[0] == 2 )
 			res = analogReadPin(ADC3, parameters[1]);
 		
-		TableOf16bits * ret = (TableOf16bits *)pvPortMalloc(4);
-		ret->length = 2;
+		TableOf16bits ret;// = (TableOf16bits *)pvPortMalloc(4);
+		ret.length = 2;
+		ret.data = (uint16_t *)pvPortMalloc(2);
 		//ret->data[0] = htons(res);
-		ret->data[0] = res;
-		response = (OnePacket *)ret;
+		ret.data[0] = res;
+		response = *((OnePacket *)&ret);
 		xQueueSend(sendQueue, &response, 0);
 	}
 	
@@ -232,11 +233,12 @@ void Cluster::parseCommand()
 		if( !check_for_parameters(0) ) return;
 		uint32_t clock = getCoreClock();
 		
-		TableOf16bits * ret = (TableOf16bits *)pvPortMalloc(6);
-		ret->length = 4;
-		ret->data[0] = (clock >> 16);
-		ret->data[1] = (clock & 0xFFFF);
-		response = (OnePacket *)ret;
+		TableOf16bits ret;//
+		ret.data = (uint16_t *)pvPortMalloc(4);
+		ret.length = 4;
+		ret.data[0] = (clock >> 16);
+		ret.data[1] = (clock & 0xFFFF);
+		response = *((OnePacket *)&ret);
 		xQueueSend(sendQueue, &response, 0);
 	}
 	else if ( command == COMMAND_TIMER_Init )

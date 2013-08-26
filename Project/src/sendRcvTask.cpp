@@ -24,7 +24,7 @@ struct netconn *UDPConnection;
 
 void sendingTask(void * param)
 {
-	OnePacket * packet;
+	OnePacket packet;
 	while( sendQueue == NULL );
 	while( networkOK == NULL );
 	while( xSemaphoreTake(networkOK, portMAX_DELAY) != pdTRUE );
@@ -35,9 +35,10 @@ void sendingTask(void * param)
 		{
 			while( xSemaphoreTake( blockEthernetInterface, portMAX_DELAY ) != pdTRUE );
 
-			UDPsend_packet(packet->data,packet->length);
+			UDPsend_packet(packet.data,(packet.length & (0x3FF)));
 
-			vPortFree(packet);
+			//vPortFree(packet.data);
+			packet.clean();
 			xSemaphoreGive( blockEthernetInterface );
 		}
 	}
@@ -48,7 +49,7 @@ void sendingTask(void * param)
 u8_t rcvBuffer[600];
 void ReadingTask(void * pvParameters)
 {
-	OnePacket * pointer_to_packet;
+	OnePacket packet;
 	static struct netbuf *UDPbuffer;
 
 	while( blockEthernetInterface == NULL );
@@ -63,12 +64,14 @@ void ReadingTask(void * pvParameters)
 			//pointer_to_packet = malloc(OnePacketMAXSIZE
 			//rcvSize = UDPreceive_packet(rcvBuffer);
 			UDPbuffer = netconn_recv(UDPConnection);
-			pointer_to_packet = (OnePacket *)pvPortMalloc(2+UDPbuffer->p->tot_len);
-			pointer_to_packet->length = UDPbuffer->p->tot_len;
-			netbuf_copy(UDPbuffer, pointer_to_packet->data, UDPbuffer->p->tot_len);
+			packet.length = UDPbuffer->p->tot_len;
+			packet.data = (uint8_t *)pvPortMalloc(packet.length);
+			//pointer_to_packet = (OnePacket *)pvPortMalloc(2+UDPbuffer->p->tot_len);
+			//pointer_to_packet->length = UDPbuffer->p->tot_len;
+			netbuf_copy(UDPbuffer, packet.data, UDPbuffer->p->tot_len);
 			netbuf_delete(UDPbuffer);
 
-			xQueueSend(receiveQueue, &pointer_to_packet, 0);
+			xQueueSend(receiveQueue, &packet, 0);
 		}
 	}
 }

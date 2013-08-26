@@ -21,11 +21,10 @@ extern "C" {
 #include "continiousADC.h"
 uint8_t adcMeasurements[1080];
 //TableOf16bits adcMeasurements;
-extern PointerToTableOf16bits resp;
-extern PointerToTableOf16bits * ptr_resp;
+
 void continiousADC_init(uint32_t period, uint16_t prescaler)
-{	
-	ptr_resp = &resp;
+{
+	
 	DMA_InitTypeDef DMA_InitStructure;
 	NVIC_InitTypeDef NVIC_InitStructure;
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -56,8 +55,6 @@ void continiousADC_init(uint32_t period, uint16_t prescaler)
   DMA_InitStructure.DMA_Channel = DMA_Channel_2;  
   DMA_InitStructure.DMA_PeripheralBaseAddr = (uint32_t)(&ADC3->DR);
   DMA_InitStructure.DMA_Memory0BaseAddr = (uint32_t)(&(adcMeasurements));
-	//adcMeasurements.length = 540;
-	resp.length = 540;
   DMA_InitStructure.DMA_DIR = DMA_DIR_PeripheralToMemory;
   DMA_InitStructure.DMA_BufferSize = 540;
   DMA_InitStructure.DMA_PeripheralInc = DMA_PeripheralInc_Disable;

@@ -467,6 +467,11 @@
               <FileType>8</FileType>
               <FilePath>..\src\timers.cpp</FilePath>
             </File>
+            <File>
+              <FileName>continiousADC.cpp</FileName>
+              <FileType>8</FileType>
+              <FilePath>..\src\continiousADC.cpp</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

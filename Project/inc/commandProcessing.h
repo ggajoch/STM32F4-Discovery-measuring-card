@@ -21,20 +21,23 @@ extern "C" {
 struct OnePacket
 {
 	u16_t length; //2 bytes
-	char  data[560];
+	uint8_t * data;//[560];
 	void clean()
 	{
-		vPortFree(this);
+		if( ! (this->length & (1 << 13) ) )
+		{
+			vPortFree(this->data);
+		}
 	}
 };
 
 struct TableOf16bits
 {
 	u16_t length; //2 bytes
-	u16_t data[280];
+	u16_t * data;//[280];
 	void clean()
 	{
-		vPortFree(this);
+		vPortFree(this->data);
 	}
 };
 
