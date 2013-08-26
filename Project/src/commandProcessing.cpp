@@ -7,6 +7,7 @@
 #include "timers.h"
 #include "internalDAC.h"
 #include <stm32f4xx_adc.h>
+#include "continiousADC.h"
 
 #define GLUE(a,b) (a ## b)
 
@@ -247,6 +248,14 @@ void Cluster::parseCommand()
 	}
 
 	
+	//		continious ADC mode
+	
+	else if ( command == COMMAND_continiousADC_init )
+	{
+		//void continiousADC_init(uint32_t period, uint16_t prescaler)
+		if( !check_for_parameters(2) ) return;
+		continiousADC_init(parameters[0], parameters[1]);
+	}
 	
 	else
 	{

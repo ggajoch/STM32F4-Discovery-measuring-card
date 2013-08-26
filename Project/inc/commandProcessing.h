@@ -38,6 +38,16 @@ struct TableOf16bits
 	}
 };
 
+struct PointerToTableOf16bits
+{
+	u16_t length; //2 bytes
+	uint8_t * data;
+	void clean()
+	{
+		vPortFree(this);
+	}
+};
+
 struct Cluster
 {
 	u8_t command;

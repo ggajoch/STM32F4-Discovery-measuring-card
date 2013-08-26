@@ -30,22 +30,21 @@ void TIMER_Init(TIM_TypeDef* TIMx, uint32_t period, uint16_t prescaler)
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_TimeBaseStructure.TIM_Period = period;
-  TIM_TimeBaseStructure.TIM_Prescaler = prescaler;//(uint16_t) ((SystemCoreClock / 2) / 28000000) - 1;
+  TIM_TimeBaseStructure.TIM_Prescaler = prescaler - 1;//(uint16_t) ((SystemCoreClock / 2) / 28000000) - 1;
   TIM_TimeBaseStructure.TIM_ClockDivision = 0;
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
   TIM_TimeBaseInit(TIMx, &TIM_TimeBaseStructure);
 	
-	TIM_Cmd(TIM3, ENABLE);
-	TIM_ARRPreloadConfig(TIM2, ENABLE);
-  TIM_Cmd(TIM2, ENABLE);
+	TIM_Cmd(TIMx, ENABLE);
+	TIM_ARRPreloadConfig(TIMx, ENABLE);
+	/*
 	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE); 
-	
 	NVIC_InitTypeDef NVIC_InitStructure;
 	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 15;
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_Init(&NVIC_InitStructure);
+	NVIC_Init(&NVIC_InitStructure);*/
 }
 
 void TIMER_SelectOutTrigger(TIM_TypeDef* TIMx)

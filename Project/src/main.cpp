@@ -12,6 +12,7 @@ extern "C" {
 }
 #include "sendRcvTask.h"
 #include "commandProcessing.h"
+#include "continiousADC.h"
 
 #define LED_TASK_PRIO    ( tskIDLE_PRIORITY + 1 )
 
@@ -33,6 +34,18 @@ DAC_InitTypeDef  DAC_InitStructure;
 TIM_OCInitTypeDef  TIM_OCInitStructure;
 USART_InitTypeDef USART_InitStructure;
 
+//extern TableOf16bits adcMeasurements;
+
+// void DMA2_Stream0_IRQHandler()
+// {
+// 	OnePacket * response;
+// 	if( DMA_GetITStatus(DMA2_Stream0, DMA_FLAG_TCIF0) )
+// 	{
+// 		DMA_ClearITPendingBit(DMA2_Stream0, DMA_IT_TCIF0);
+// 		response = (OnePacket *)&(adcMeasurements);
+// 		xQueueSend(sendQueue, &response, 0);
+// 	}
+// }
 
 
 
@@ -123,12 +136,33 @@ void ToggleLed4(void * pvParameters)
 	{
 		for (;;)
 		{
-			//STM_EVAL_LEDToggle(LED4);
+			STM_EVAL_LEDToggle(LED4);
 			vTaskDelay(100);
 		}
 	}
 }
 
+PointerToTableOf16bits resp;
+PointerToTableOf16bits * ptr_resp;
+extern uint16_t adcMeasurements[540];
+extern "C" void DMA2_Stream0_IRQHandler()
+{
+	
+	if( DMA_GetFlagStatus(DMA2_Stream0, DMA_FLAG_TCIF0) )
+	{
+		DMA_ClearITPendingBit(DMA2_Stream0, DMA_IT_TCIF0);
+		resp.data = (uint8_t *)&adcMeasurements;
+		xQueueSend(sendQueue, &ptr_resp, 0);
+	}
+	else if( DMA_GetFlagStatus(DMA2_Stream0, DMA_FLAG_HTIF0) )
+	{
+		DMA_ClearITPendingBit(DMA2_Stream0, DMA_FLAG_HTIF0);
+		//OnePacket * tmp = (OnePacket *)&adcMeasurements;
+		//xQueueSend(sendQueue, &tmp, 0);
+		resp.data = (uint8_t *)&(adcMeasurements[540]);
+		xQueueSend(sendQueue, &ptr_resp, 0);
+	}
+}
 
 extern xQueueHandle analogINReadQueue;
 void MainTask(void * pvParameters)
@@ -142,14 +176,9 @@ void MainTask(void * pvParameters)
 	UDPConnection = UDPsetup_network();
 
 
-	x.length = 3;
-	sprintf(x.data, "aaa");
-	//x.data = nap;
-
 	xSemaphoreGive( blockReadingTask );
 	xSemaphoreGive( networkOK );
 	
-		
 	while (1)
 	{
 		OnePacket * wsk_packet, *ww;
@@ -160,8 +189,6 @@ void MainTask(void * pvParameters)
 			order = (Cluster *)&(wsk_packet->data[0]);
 			order->parseCommand();
 			wsk_packet->clean();
-			
-			
 			
 			//vPortFree(wsk_packet);
 		}
