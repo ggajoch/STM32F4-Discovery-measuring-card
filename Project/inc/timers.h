@@ -23,7 +23,8 @@ extern "C" {
 
 
 uint32_t getCoreClock();
-void TIMER_Init(TIM_TypeDef* TIMx, uint32_t period, uint16_t prescaler);
+//void TIMER_Init(TIM_TypeDef* TIMx, uint32_t period, uint16_t prescaler);
+void TIMER_Init(TIM_TypeDef* TIMx, uint32_t period, uint16_t prescaler, uint8_t interrupt = 0, IRQn_Type IRQChannel = TIM2_IRQn);
 
 
 #endif

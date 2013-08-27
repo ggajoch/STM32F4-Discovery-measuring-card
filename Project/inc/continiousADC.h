@@ -25,5 +25,8 @@ extern "C" {
 
 
 void continiousADC_init(uint32_t period, uint16_t prescaler);
+void continiousADC_stop();
+
+
 
 #endif

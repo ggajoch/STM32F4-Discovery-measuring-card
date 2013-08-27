@@ -24,10 +24,22 @@ struct OnePacket
 	uint8_t * data;//[560];
 	void clean()
 	{
-		if( ! (this->length & (1 << 13) ) )
+		if( shouldClean() )
 		{
 			vPortFree(this->data);
 		}
+	}
+	bool shouldClean()
+	{
+		return (!(this->length & (1 << 13)));
+	}
+	u16_t cleanLength()
+	{
+		return (this->length & 0x1FFF);
+	}
+	bool markToNoFree()
+	{
+		this->length |= (1 << 13);
 	}
 };
 

@@ -35,7 +35,7 @@ void sendingTask(void * param)
 		{
 			while( xSemaphoreTake( blockEthernetInterface, portMAX_DELAY ) != pdTRUE );
 
-			UDPsend_packet(packet.data,(packet.length & (0x3FF)));
+			UDPsend_packet(packet.data,packet.cleanLength());
 
 			//vPortFree(packet.data);
 			packet.clean();

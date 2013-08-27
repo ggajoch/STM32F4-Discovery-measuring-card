@@ -24,9 +24,16 @@ uint32_t getCoreClock()
 }
 
 
-void TIMER_Init(TIM_TypeDef* TIMx, uint32_t period, uint16_t prescaler)
+void TIMER_Init(TIM_TypeDef* TIMx, uint32_t period, uint16_t prescaler, uint8_t interrupt = 0, IRQn_Type IRQChannel = TIM2_IRQn)
 {
-	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	if( TIMx == TIM2 )
+		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE);
+	else if( TIMx == TIM3 )
+		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM3, ENABLE);
+	if( TIMx == TIM4 )
+		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM4, ENABLE);
+	if( TIMx == TIM5 )
+		RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5, ENABLE);
 	
 	TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;
 	TIM_TimeBaseStructure.TIM_Period = period;
@@ -35,16 +42,18 @@ void TIMER_Init(TIM_TypeDef* TIMx, uint32_t period, uint16_t prescaler)
   TIM_TimeBaseStructure.TIM_CounterMode = TIM_CounterMode_Up;
   TIM_TimeBaseInit(TIMx, &TIM_TimeBaseStructure);
 	
+	if( interrupt )
+	{
+		TIM_ITConfig(TIMx, TIM_IT_Update, ENABLE); 
+		NVIC_InitTypeDef NVIC_InitStructure;
+		NVIC_InitStructure.NVIC_IRQChannel = IRQChannel;
+		NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+		NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 15;
+		NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+		NVIC_Init(&NVIC_InitStructure);
+	}
 	TIM_Cmd(TIMx, ENABLE);
 	TIM_ARRPreloadConfig(TIMx, ENABLE);
-	/*
-	TIM_ITConfig(TIM3, TIM_IT_Update, ENABLE); 
-	NVIC_InitTypeDef NVIC_InitStructure;
-	NVIC_InitStructure.NVIC_IRQChannel = TIM3_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 15;
-	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
-	NVIC_Init(&NVIC_InitStructure);*/
 }
 
 void TIMER_SelectOutTrigger(TIM_TypeDef* TIMx)

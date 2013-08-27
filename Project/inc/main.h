@@ -110,7 +110,8 @@ extern volatile int TTime;
 #define COMMAND_getCoreClock						12
 #define COMMAND_TIMER_Init							13
 #define COMMAND_continiousADC_init			14
-
+#define COMMAND_continiousADC_stop			15
+#define COMMAND_writeWaveform						16
 
 
 #ifdef __cplusplus

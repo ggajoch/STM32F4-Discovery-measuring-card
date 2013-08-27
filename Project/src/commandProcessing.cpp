@@ -123,6 +123,20 @@ void Cluster::parseCommand()
 		response.data[0] = digitalIOReadPort();
 		xQueueSend(sendQueue, &response, 0);
 	}
+	else if( command == COMMAND_writeWaveform )
+	{
+		//void writeWaveform(uint8_t pin, uint8_t * values, uint8_t nrOfSamples, uint32_t period, uint16_t presc, uint8_t repetition)
+		// pin - 0
+		// nrOfSamples - 1
+		// period - 2
+		// presc - 3
+		// rep -4
+		if( !check_for_parameters(5+parameters[1]) ) return;
+		writeWaveform(parameters[0], &parameters[5], parameters[1], parameters[2], parameters[3], parameters[4]);
+		
+		
+		
+	}
 	
 	//ANALOG BUILD_IN
 	
@@ -257,6 +271,13 @@ void Cluster::parseCommand()
 		//void continiousADC_init(uint32_t period, uint16_t prescaler)
 		if( !check_for_parameters(2) ) return;
 		continiousADC_init(parameters[0], parameters[1]);
+	}
+	else if ( command == COMMAND_continiousADC_stop )
+	{
+		//void continiousADC_init(uint32_t period, uint16_t prescaler)
+		if( !check_for_parameters(0) ) return;
+		continiousADC_stop();
+		send_ok_resp();
 	}
 	
 	else

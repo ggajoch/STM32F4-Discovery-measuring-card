@@ -151,7 +151,7 @@ extern "C" void DMA2_Stream0_IRQHandler()
 	{
 		DMA_ClearITPendingBit(DMA2_Stream0, DMA_IT_TCIF0);
 		resp.data = (uint8_t *)&adcMeasurements[540];
-		xQueueSend(sendQueue, &resp, 0);
+		xQueueSendFromISR(sendQueue, &resp, 0);
 	}
 	else if( DMA_GetITStatus(DMA2_Stream0, DMA_IT_HTIF0) )
 	{
@@ -159,7 +159,7 @@ extern "C" void DMA2_Stream0_IRQHandler()
 		//OnePacket * tmp = (OnePacket *)&adcMeasurements;
 		//xQueueSend(sendQueue, &tmp, 0);
 		resp.data = (uint8_t *)&(adcMeasurements[0]);
-		xQueueSend(sendQueue, &resp, 0);
+		xQueueSendFromISR(sendQueue, &resp, 0);
 	}
 }
 

@@ -109,7 +109,7 @@ void continiousADC_init(uint32_t period, uint16_t prescaler)
 	//Enable ADC conversion
 	//ADC_Cmd(ADC3, ENABLE);
 	//Select the channel to be read from
-	ADC_RegularChannelConfig(ADC3, ADC_Channel_10, 1, ADC_SampleTime_15Cycles);
+	ADC_RegularChannelConfig(ADC3, ADC_Channel_10, 1, ADC_SampleTime_3Cycles);
 
  /* Enable DMA request after last transfer (Single-ADC mode) */
   ADC_DMARequestAfterLastTransferCmd(ADC3, ENABLE);
@@ -121,7 +121,18 @@ void continiousADC_init(uint32_t period, uint16_t prescaler)
   ADC_Cmd(ADC3, ENABLE);
 }
 
-
+void continiousADC_stop()
+{
+	NVIC_InitTypeDef NVIC_InitStructure;
+	ADC_Cmd(ADC3, DISABLE);
+	ADC_DMACmd(ADC3, DISABLE);
+	ADC_DMARequestAfterLastTransferCmd(ADC3, DISABLE);
+	DMA_Cmd(DMA2_Stream0, DISABLE);
+	NVIC_InitStructure.NVIC_IRQChannel = DMA2_Stream0_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = DISABLE;
+	NVIC_Init(&NVIC_InitStructure);
+	TIM_Cmd(TIM2, DISABLE);
+}
 
 
 
