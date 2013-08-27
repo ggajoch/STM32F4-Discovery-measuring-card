@@ -6,6 +6,8 @@
 #include <stm32f4xx_tim.h>
 
 #include "timers.h"
+#include "digitalIO.h" 
+
 
 #define USING_GPIO GPIOD
 
@@ -50,60 +52,27 @@ uint16_t digitalIOReadPort()
 }
 
 
-uint8_t WriteMode = 0, ReadMode = 0;
-uint16_t waveformSamples[1000];
-uint16_t OutNrOfSamples, OutActualSample, OutSamplePos, OutPin;
+GPIOWaveFormWriter GPIOWriter;
 
-extern "C" void TIM4_IRQHandler()
+extern "C" void TIM2_IRQHandler()
 {
-	if( TIM_GetITStatus(TIM4, TIM_IT_Update) )
+	if( TIM_GetITStatus(TIM2, TIM_IT_Update) )
 	{
-		TIM_ClearITPendingBit(TIM4, TIM_IT_Update);
+		TIM_ClearITPendingBit(TIM2, TIM_IT_Update);
 		
-		if( WriteMode )
-		{
-			//GPIO_WriteBit(GPIOD, OutPin, ));
-			if( waveformSamples[OutActualSample] & ( 1 << OutSamplePos ) )
-			{
-				//GPIOD->ODR |= OutPin;
-				GPIOD->BSRRL |= OutPin;
-			}
-			else
-			{
-				//GPIOD->ODR &= ~(OutPin);
-				GPIOD->BSRRH |= OutPin;
-			}
-			++OutSamplePos;
-			if( OutSamplePos == 16 )
-			{
-				OutSamplePos = 0;
-				++OutActualSample;
-			}
-			if( OutActualSample == OutNrOfSamples )
-			{
-				OutActualSample = 0;
-			}
-		}
-		if( ReadMode )
-		{
-		}
-		
+		GPIOWriter.make_new_sample();
 		
 	}
 }
 
 void writeWaveform(uint16_t pin, uint16_t * values, uint8_t nrOfSamples, uint32_t period, uint16_t presc, uint8_t repetition)
 {
-	for(uint16_t i = 0; i < nrOfSamples; ++i)
-	{
-		waveformSamples[i] = values[i];
-	}
-	//waveformSamples = values;
-	OutPin = pin;
-	OutNrOfSamples = nrOfSamples;
-	OutActualSample = 0;
-	OutSamplePos = 0;
-	TIMER_Init(TIM4, period, presc, true, TIM4_IRQn);	
+	GPIOWriter.elements = nrOfSamples;
+	GPIOWriter.pins = pin;
+	GPIOWriter.repeat = repetition;
+	GPIOWriter.table = (uint16_t *)&values;
+	
+	TIMER_Init(TIM2, period, presc, true, TIM2_IRQn);	
 }
 
 void readWaveform(uint8_t pin, uint8_t * values, uint8_t nrOfSamples, uint8_t delays)
